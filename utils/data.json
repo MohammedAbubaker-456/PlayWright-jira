@@ -1,0 +1,44 @@
+[
+  {
+    "iconToClick": "//span[@class='fa fa fa-pie-chart']",
+    "pageHeaderLocator": "(//h1[normalize-space()='Dashboard'])[1]",
+    "title": "Dashboard",
+    "expectedActions": ["Report New Incident"],
+    "regions" : ["//div[@id='R4908901176904450894']", "//div[@id='R5087099185827928368']"]
+  },
+  {
+    "iconToClick": "//span[@class='fa fa fa-bar-chart']",
+    "pageHeaderLocator": "//h1[normalize-space()='Report and analytics']",
+    "title": "Report and analytics",
+    "expectedActions": ["Export As CSV", "Export As PDF"],
+    "regions" : []
+  },
+  {
+    "iconToClick": "//span[@class='fa fa fa-clock-o']",
+    "pageHeaderLocator": "//h1[normalize-space()='SLA Overview']",
+    "title": "SLA Overview",
+    "expectedActions": [],
+    "regions" : []
+  },
+  {
+    "iconToClick": "//span[@class='fa fa fa-download']",
+    "pageHeaderLocator": "//h1[normalize-space()='Summary Export']",
+    "title": "Summary Export",
+    "expectedActions": ["Reset"],
+    "regions" : []
+  },
+  {
+    "iconToClick": "//span[@class='fa fa fa-users']",
+    "pageHeaderLocator": "//h1[normalize-space()='Incident Assignment']",
+    "title": "Incident Assignment",
+    "expectedActions": ["Bulk Assignment", "All", "Unassigned","High Priority","Assigned"],
+    "regions" : []
+  },
+  {
+    "iconToClick": "//span[@class='fa fa fa-check-circle-o']",
+    "pageHeaderLocator": "//h1[normalize-space()='Pending Approvals']",
+    "title": "Pending Approvals",
+    "expectedActions": ["Go"],
+    "regions" : []
+  }
+]
