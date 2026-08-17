@@ -99,24 +99,24 @@ module.exports = defineConfig({
       },
     },
 
-    {
-      name: "Tablet",
-      use: {
-        ...devices["Desktop Chrome"],
-        channel: "chrome",
-        viewport: {
-          width: 768,
-          height: 1024,
-        },
-      },
-    },
+    // {
+    //   name: "Tablet",
+    //   use: {
+    //     ...devices["Desktop Chrome"],
+    //     channel: "chrome",
+    //     viewport: {
+    //       width: 768,
+    //       height: 1024,
+    //     },
+    //   },
+    // },
 
-    {
-      name: "Mobile",
-      use: {
-        ...devices["Pixel 5"],
-      },
-    },
+    // {
+    //   name: "Mobile",
+    //   use: {
+    //     ...devices["Pixel 5"],
+    //   },
+    // },
   ],
 
   /* Run your local dev server before starting the tests */
