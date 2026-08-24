@@ -2,135 +2,267 @@ require("dotenv").config();
 const fs = require("fs");
 // const FormData = require("form-data");
 
-const auth = Buffer.from(
-    `${process.env.JIRA_EMAIL}:${process.env.JIRA_API_TOKEN}`
-).toString("base64");
+const BASE_URL = process.env.JIRA_BASE_URL;
+const EMAIL = process.env.JIRA_EMAIL;
+const API_TOKEN = process.env.JIRA_API_TOKEN;
+const PROJECT_KEY = process.env.JIRA_PROJECT_KEY || "SCBT";
 
-async function createJiraBug(summary, description) {
-
-    const response = await fetch(
-        `${process.env.JIRA_BASE_URL}/rest/api/3/issue`,
-        {
-            method: "POST",
-
-            headers: {
-                "Authorization": `Basic ${auth}`,
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                fields: {
-                    project: {
-                        key: process.env.JIRA_PROJECT_KEY
-                    },
-
-                    summary: summary,
-
-                    description: {
-                        type: "doc",
-                        version: 1,
-                        content: [
-                            {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: description
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-
-                    issuetype: {
-                        name: "Bug"
-                    }
-                }
-            })
-        }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        console.error("Jira error:", data);
-        throw new Error(`Jira API failed with status ${response.status}`);
-    }
-
-    console.log("Jira bug created:", data.key);
-
-    return data;
+if (!BASE_URL || !EMAIL || !API_TOKEN) {
+  throw new Error(
+    "Missing Jira environment variables. Required: JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN",
+  );
 }
 
-async function attachFileToJira(issueKey, filePath) {
+const auth = Buffer.from(`${EMAIL}:${API_TOKEN}`).toString("base64");
 
-    if (!fs.existsSync(filePath)) {
-        console.error("File does not exist:", filePath);
-        return;
-    }
+async function jiraRequest(path, options = {}) {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...options,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Basic ${auth}`,
+      ...(options.headers || {}),
+    },
+  });
 
-    const auth = Buffer.from(
-        `${process.env.JIRA_EMAIL}:${process.env.JIRA_API_TOKEN}`
-    ).toString("base64");
+  const text = await response.text();
 
-    // Read screenshot
-    const fileBuffer = fs.readFileSync(filePath);
+  let data = null;
 
-    // Convert file to Blob
-    const fileBlob = new Blob(
-        [fileBuffer],
-        {
-            type: "image/png"
-        }
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+
+  if (!response.ok) {
+    throw new Error(`Jira API ${response.status}: ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+
+async function attachFile(issueKey, filePath) {
+  if (!filePath) {
+    throw new Error("No attachment path provided");
+  }
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Attachment file does not exist: ${filePath}`);
+  }
+
+  console.log(`[JIRA] Preparing screenshot upload: ${filePath}`);
+
+  const fileBuffer = fs.readFileSync(filePath);
+
+  // Node.js native Blob
+  const blob = new Blob([fileBuffer], {
+    type: "image/png",
+  });
+
+  // Node.js native FormData
+  const form = new FormData();
+
+  form.append("file", blob, "playwright-failure.png");
+
+  console.log(`[JIRA] Sending screenshot to ${issueKey}...`);
+
+  const response = await fetch(
+    `${BASE_URL}/rest/api/3/issue/${issueKey}/attachments`,
+    {
+      method: "POST",
+
+      headers: {
+        Authorization: `Basic ${auth}`,
+        Accept: "application/json",
+        "X-Atlassian-Token": "no-check",
+
+        // IMPORTANT:
+        // Do NOT set Content-Type here.
+        // fetch() automatically creates:
+        // multipart/form-data; boundary=...
+      },
+
+      body: form,
+    },
+  );
+
+  const text = await response.text();
+
+  let data;
+
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+
+  if (!response.ok) {
+    console.error("[JIRA] Attachment response:", data);
+
+    throw new Error(
+      `Jira attachment error ${response.status}: ${JSON.stringify(data)}`,
     );
+  }
 
-    // Use Node's built-in FormData
-    const form = new FormData();
+  console.log(
+    `[JIRA] Screenshot successfully attached to ${issueKey}`,
+  );
 
-    form.append(
-        "file",
-        fileBlob,
-        "screenshot.png"
+  return data;
+}
+
+/**
+ * Get Jira field metadata.
+ */
+async function getJiraFields() {
+  return jiraRequest("/rest/api/3/field");
+}
+
+/**
+ * Find a Jira field ID by its name.
+ *
+ * Example:
+ * "Execution Status" -> "customfield_100xx"
+ */
+async function getFieldId(fieldName) {
+  const fields = await getJiraFields();
+
+  const field = fields.find(
+    (item) => item.name.toLowerCase() === fieldName.toLowerCase(),
+  );
+
+  if (!field) {
+    throw new Error(`Jira field not found: ${fieldName}`);
+  }
+
+  return field.id;
+}
+
+/**
+ * Find the Jira Test Case using our permanent Test Case ID.
+ *
+ * Example:
+ * TC_UI_INC_GLOBAL_002
+ *        ↓
+ * SCBT-123
+ */
+async function findTestCase(testCaseId) {
+  const jql =
+    `project = "${PROJECT_KEY}" ` + `AND "Test Case ID" = "${testCaseId}"`;
+
+  const body = {
+    jql,
+    maxResults: 10,
+    fields: ["summary", "issuetype"],
+  };
+
+  const result = await jiraRequest("/rest/api/3/search/jql", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+  if (!result.issues || result.issues.length === 0) {
+    throw new Error(`No Jira Test Case found for Test Case ID: ${testCaseId}`);
+  }
+
+  if (result.issues.length > 1) {
+    throw new Error(
+      `Multiple Jira Test Cases found for Test Case ID: ${testCaseId}`,
     );
+  }
 
-    const response = await fetch(
-        `${process.env.JIRA_BASE_URL}/rest/api/3/issue/${issueKey}/attachments`,
-        {
-            method: "POST",
+  const issue = result.issues[0];
 
-            headers: {
-                "Authorization": `Basic ${auth}`,
-                "Accept": "application/json",
-                "X-Atlassian-Token": "no-check"
-            },
-
-            body: form
-        }
+  if (issue.fields.issuetype?.name !== "Test Cases") {
+    throw new Error(
+      `${issue.key} is ${issue.fields.issuetype?.name}, not Test Cases`,
     );
+  }
 
-    const data = await response.json();
+  return issue;
+}
 
-    if (!response.ok) {
+/**
+ * Update execution information on an existing Jira Test Case.
+ */
+async function updateTestCaseExecution({
+  testCaseId,
+  status,
+  environment,
+  executionDate,
+  comment,
+  screenshotPath,
+}) {
+  const issue = await findTestCase(testCaseId);
 
-        console.error(
-            "Jira attachment error:",
-            data
-        );
+  const executionStatusField = await getFieldId("Execution Status");
+  const lastExecutionDateField = await getFieldId("Last Execution Date");
+  //   const lastExecutionEnvironmentField = await getFieldId(
+  //     "Last Execution Environment",
+  //   );
 
-        throw new Error(
-            `Jira attachment failed with status ${response.status}`
-        );
-    }
+  const fields = {};
 
-    console.log(
-        `Screenshot successfully attached to ${issueKey}`
-    );
+  fields[executionStatusField] = {
+    value: status,
+  };
 
-    return data;
+  fields[lastExecutionDateField] = executionDate;
+
+  //   fields[lastExecutionEnvironmentField] = environment;
+
+  await jiraRequest(`/rest/api/3/issue/${issue.key}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      fields,
+    }),
+  });
+
+  if (comment) {
+    await addComment(issue.key, comment);
+  }
+
+  if (screenshotPath) {
+    await attachFile(issue.key, screenshotPath);
+  }
+
+  return issue.key;
+}
+
+/**
+ * Add execution history as a Jira comment.
+ */
+async function addComment(issueKey, text) {
+  await jiraRequest(`/rest/api/3/issue/${issueKey}/comment`, {
+    method: "POST",
+    body: JSON.stringify({
+      body: {
+        type: "doc",
+        version: 1,
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text,
+              },
+            ],
+          },
+        ],
+      },
+    }),
+  });
 }
 
 module.exports = {
-    createJiraBug,
-    attachFileToJira
+  jiraRequest,
+  getJiraFields,
+  getFieldId,
+  findTestCase,
+  updateTestCaseExecution,
+  addComment,
+  attachFile,
 };

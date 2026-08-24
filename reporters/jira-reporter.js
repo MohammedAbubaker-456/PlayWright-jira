@@ -1,54 +1,93 @@
-const { createJiraBug, attachFileToJira } = require("../utils/jira");
+const { updateTestCaseExecution } = require("../utils/jira");
+
+function extractTestCaseId(test) {
+  const fullTitle = test.titlePath().join(" ");
+
+  const match = fullTitle.match(/TC_[A-Z0-9_]+/);
+
+  return match ? match[0] : null;
+}
 
 class JiraReporter {
   async onTestEnd(test, result) {
-    if (result.status === "failed" || result.status === "timedOut") {
-      console.log(`\n❌ Test failed: ${test.title}`);
+    const testCaseId = extractTestCaseId(test);
 
-      const errorMessage = result.error?.message || "Unknown error";
+    if (!testCaseId) {
+      console.log(`[JIRA] No Test Case ID found for: ${test.title}`);
 
-      const summary = `Playwright Test Failed: ${test.title}`;
+      return;
+    }
 
-      const description = `
-Playwright Test Failure
+    console.log(`\n[JIRA] Processing ${testCaseId}`);
 
-Test:
-${test.title}
+    let jiraStatus;
 
-File:
-${test.location.file}
+    if (result.status === "passed") {
+      jiraStatus = process.env.JIRA_EXECUTION_STATUS_PASSED || "Passed";
+    } else if (result.status === "failed" || result.status === "timedOut") {
+      jiraStatus = process.env.JIRA_EXECUTION_STATUS_FAILED || "Failed";
+    } else {
+      jiraStatus = process.env.JIRA_EXECUTION_STATUS_SKIPPED || "Skipped";
+    }
 
-Error:
-${errorMessage}
+    const executionDate = new Date().toISOString().split("T")[0];
 
-Status:
-${result.status}
-`;
+    // const environment = `${test.parent.project()?.name || "Unknown"} / ${
+    //   result.retry
+    // }`;
 
-      try {
-        // 1. Create Jira bug
-        const jiraIssue = await createJiraBug(summary, description);
+    const environment = "Desktop / Chrome";
 
-        console.log(`Jira Bug Created: ${jiraIssue.key}`);
+    let comment = [
+      `Playwright Execution`,
+      ``,
+      `Test Case ID: ${testCaseId}`,
+      `Test: ${test.title}`,
+      `Result: ${jiraStatus}`,
+      `Date: ${new Date().toISOString()}`,
+      `Duration: ${result.duration} ms`,
+      `Retry: ${result.retry}`,
+    ].join("\n");
 
-        // 2. Find screenshot
-        const screenshot = result.attachments.find(
-          (attachment) =>
-            attachment.contentType === "image/png" ||
-            attachment.name.includes("screenshot"),
-        );
+    if (result.error) {
+      comment += [``, `Error:`, result.error.message].join("\n");
+    }
 
-        // 3. Upload screenshot
-        if (screenshot && screenshot.path) {
-          console.log(`Uploading screenshot: ${screenshot.path}`);
+    /*
+     * Playwright automatically creates the screenshot because
+     * playwright.config.js contains:
+     *
+     * screenshot: "only-on-failure"
+     */
 
-          await attachFileToJira(jiraIssue.key, screenshot.path);
-        } else {
-          console.log("No screenshot found for this test.");
-        }
-      } catch (error) {
-        console.error("Jira integration failed:", error.message);
+    const screenshot = result.attachments.find(
+      (attachment) =>
+        attachment.path &&
+        (attachment.contentType === "image/png" ||
+          attachment.name === "screenshot"),
+    );
+
+    if (screenshot) {
+      console.log(`[JIRA] Failure screenshot found: ${screenshot.path}`);
+    }
+
+    try {
+      const issueKey = await updateTestCaseExecution({
+        testCaseId,
+        status: jiraStatus,
+        environment,
+        executionDate,
+        comment,
+        screenshotPath: screenshot?.path || null,
+      });
+
+      console.log(`[JIRA] ${testCaseId} → ${issueKey} → ${jiraStatus}`);
+
+      if (screenshot) {
+        console.log(`[JIRA] Screenshot attached to ${issueKey}`);
       }
+    } catch (error) {
+      console.error(`[JIRA] Failed to update ${testCaseId}:`, error.message);
     }
   }
 
