@@ -30,12 +30,13 @@ test.describe("Page Header, TC_UI_INC_GLOBAL_004, 005, 006, 007", () => {
       "//span[@class='fa fa fa-pie-chart']",
       "//span[@class='fa fa fa-bar-chart']",
       "//span[@class='fa fa fa-users']",
-    //   "//span[@class='fa fa fa-clock-o']",
-    //   "//span[@class='fa fa fa-clock-o']",
+      //   "//span[@class='fa fa fa-clock-o']",
+      //   "//span[@class='fa fa fa-clock-o']",
     ];
 
     for (let logo of logoloadersPage) {
       await page.locator(logo).click();
+      page.waitForTimeout(3000);
 
       await expect("//span[@class='u-Processing-spinner']").toBeVisible();
 

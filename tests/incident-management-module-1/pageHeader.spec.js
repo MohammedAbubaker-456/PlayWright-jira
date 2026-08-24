@@ -39,7 +39,7 @@ test.describe("Page Header, TC_UI_INC_GLOBAL_004, 005, 006, 007", () => {
     for (const testData of data) {
       await page.locator(testData.iconToClick).click();
 
-      await page.waitForLoadState("networkidle");
+      // await page.waitForLoadState("networkidle");
 
       // ------------------------------------------
       // REGION VALIDATION
