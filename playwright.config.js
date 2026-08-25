@@ -5,7 +5,8 @@ const { defineConfig, devices } = require("@playwright/test");
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+
+require("dotenv").config();
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -28,7 +29,20 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
-  reporter: [["html"], ["allure-playwright"], ["./reporters/jira-reporter.js"]],
+  reporter: [
+    ["html"],
+    ["allure-playwright"],
+    // ["./reporters/jira-reporter.js"],
+    [
+      "@kiwi-tcms-ai/kiwi-tcms-reporter/playwright",
+      {
+        plan: 1,
+        build: "playwright-test",
+        matchBy: "title",
+        createMissing: false,
+      },
+    ],
+  ],
   // ['html']],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

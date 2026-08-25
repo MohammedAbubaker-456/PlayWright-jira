@@ -7,7 +7,7 @@ test.use({
 });
 
 test.describe(
-  "Global Navigation, TC_UI_INC_GLOBAL_002",
+  "TC_UI_INC_GLOBAL_002 - Login and open main navigation",
   () => {
 
     test(
