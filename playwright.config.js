@@ -32,16 +32,16 @@ module.exports = defineConfig({
   reporter: [
     ["html"],
     ["allure-playwright"],
-    // ["./reporters/jira-reporter.js"],
-    [
-      "@kiwi-tcms-ai/kiwi-tcms-reporter/playwright",
-      {
-        plan: 1,
-        build: "playwright-test",
-        matchBy: "title",
-        createMissing: false,
-      },
-    ],
+    ["./reporters/jira-reporter.js"],
+    // [
+    //   "@kiwi-tcms-ai/kiwi-tcms-reporter/playwright",
+    //   {
+    //     plan: 1,
+    //     build: "playwright-test",
+    //     matchBy: "title",
+    //     createMissing: false,
+    //   },
+    // ],
   ],
   // ['html']],
 

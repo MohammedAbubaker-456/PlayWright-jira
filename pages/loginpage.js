@@ -26,9 +26,9 @@ class LoginPage {
 
     await this.page.locator(this.loginButton).click();
 
-    // await this.page.locator(this.goToModuleButton).click();
+    await this.page.locator(this.goToModuleButton).click();
 
-    // await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("networkidle");
   }
 }
 
