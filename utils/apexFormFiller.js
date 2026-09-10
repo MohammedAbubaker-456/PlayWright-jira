@@ -5,19 +5,34 @@
  *
  * Instead of hardcoding field IDs (which change per module), this scans a
  * "scope" locator for field TYPES and fills/tests them generically:
- *   - text inputs      -> static title text (trimmed to maxlength if set)
- *   - textareas        -> boundary tested (below-min / at-max / over-max)
- *   - selects           -> always picks the 2nd option (index 1)
- *   - file inputs      -> uploads a static file path
+ *   - text inputs / textareas -> matched to `fieldData` by their <label>
+ *                                 text (normalized); falls back to random
+ *                                 lorem text if no label match is found.
+ *   - selects                 -> a RANDOM option index (never label-matched
+ *                                 on purpose - see selectDropdowns()).
+ *   - file inputs             -> uploads a static file path.
  *
  * Fields that don't exist in a given module are simply skipped, since the
  * locators just return 0 matches - no per-module config needed.
+ *
+ * LABEL MATCHING: pass `fieldData` as { "Incident Title": "some value", ... }
+ * - keys are matched against each field's associated <label> text, case
+ * -insensitively, with whitespace/asterisks normalized away. No `fieldData`
+ * yet? Every text/textarea field just gets fixed dummy lorem text instead - this
+ * is safe to use today and will start matching automatically once you pass
+ * real data in.
  *
  * IMPORTANT: Always pass a `scope` that is limited to the create/edit form
  * region (a dialog, modal, or region div), NOT the whole `page`. Oracle APEX
  * pages often share one big <form> with header search boxes, filter fields,
  * etc. Scanning the whole page will pick those up too.
  */
+
+// Fixed dummy text used for any text input/textarea whose label doesn't
+// match an entry in fieldData. Deliberately NOT randomized - only dropdown
+// selection uses Math.random(), per design.
+const DUMMY_LOREM_TEXT =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
 class ApexFormFiller {
   /**
@@ -40,12 +55,10 @@ class ApexFormFiller {
   /**
    * @param {import('@playwright/test').Page} page
    * @param {Object} options
-   * @param {import('@playwright/test').Locator} [options.scope] - Locator scoped to the form/region/dialog. Defaults to `page` (not recommended - see note above).
-   * @param {string} [options.title] - Static text used for single-line text inputs.
-   * @param {string} [options.description] - Static text used for textareas.
+   * @param {import('@playwright/test').Locator} [options.scope] - Locator scoped to the form/region/dialog. Defaults to #t_Body_content (see note above).
+   * @param {Object} [options.fieldData] - Map of label text -> value, e.g. { "Incident Title": "My title" }. Text/textarea fields whose <label> matches a key get that value; unmatched fields get fixed dummy lorem text.
    * @param {string} [options.filePath] - Static file path used for file uploads.
-   * @param {boolean} [options.testBoundaries] - Whether to run min/max boundary tests on textareas. Default true.
-   * @param {number} [options.dialogWaitMs] - Wait after each dropdown select, to allow cascading LOVs to settle. Default handled via waitForLoadState.
+   * @param {boolean} [options.testBoundaries] - Whether to run min/max boundary tests on UNMATCHED textareas (lorem fallback only). Default true.
    */
   constructor(page, options = {}) {
     this.page = page;
@@ -57,11 +70,16 @@ class ApexFormFiller {
     // isn't using Universal Theme (or the id was customized).
     this.scope = options.scope || null; // resolved lazily in _resolveScope()
 
+    // Label -> value lookup for text inputs/textareas. Keys are normalized
+    // (lowercased, trimmed, asterisks/extra whitespace stripped) so data
+    // like { "* Incident Title": "..." } and { "incident title": "..." }
+    // both work the same. Empty until you call setFieldData() or pass
+    // fieldData here - every text/textarea field just gets fixed dummy lorem
+    // text until then, which is safe to run today.
+    this.fieldData = {};
+    if (options.fieldData) this.setFieldData(options.fieldData);
+
     this.staticData = {
-      title: options.title || "This is for testing purpose (Automation)",
-      description:
-        options.description ||
-        "This record is being created for automated testing purposes.",
       filePath:
         options.filePath || "C:/Users/Public/Pictures/test-evidence.jpg",
     };
@@ -76,6 +94,45 @@ class ApexFormFiller {
 
     // Collects issues found during boundary testing, so you can assert on them
     this.validationIssues = [];
+  }
+
+  /** Normalizes a label for matching: lowercase, strip required-asterisk, collapse whitespace. */
+  _normalizeLabel(text) {
+    return (text || "")
+      .replace(/\*/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  /**
+   * Load/replace the label -> value data map. Call this once your test
+   * data file is ready, e.g. filler.setFieldData(require('./testData.json')).
+   * Keys are normalized automatically, so you can write them however is
+   * natural in your data file.
+   */
+  setFieldData(data) {
+    this.fieldData = {};
+    for (const [key, value] of Object.entries(data || {})) {
+      this.fieldData[this._normalizeLabel(key)] = value;
+    }
+  }
+
+  /** Finds the <label for="..."> text for a given field, normalized. Returns null if none found. */
+  async _getFieldLabel(field) {
+    const id = await field.getAttribute("id").catch(() => null);
+    if (!id) return null;
+
+    const label = this.page.locator(`label[for='${id}']`);
+    if ((await label.count().catch(() => 0)) === 0) return null;
+
+    const text = (
+      await label
+        .first()
+        .innerText()
+        .catch(() => "")
+    ).trim();
+    return text ? this._normalizeLabel(text) : null;
   }
 
   /** Lazily resolves the scope: explicit option > #t_Body_content > body */
@@ -114,7 +171,7 @@ class ApexFormFiller {
     return this.validationIssues;
   }
 
-  // ---------- TEXT INPUTS ----------
+  // ---------- TEXT INPUTS (label-matched, lorem fallback) ----------
   async fillTextInputs() {
     // APEX generates class "apex-item-text" on single-line text items.
     // Fallback to input[type=text] if the theme doesn't use that class.
@@ -129,8 +186,11 @@ class ApexFormFiller {
       if (await input.isDisabled()) continue;
       if (await input.getAttribute("readonly")) continue;
 
+      const label = await this._getFieldLabel(input);
+      const matched = label !== null && this.fieldData[label] !== undefined;
+      let text = matched ? String(this.fieldData[label]) : DUMMY_LOREM_TEXT;
+
       const maxLengthAttr = await input.getAttribute("maxlength");
-      let text = this.staticData.title;
       if (maxLengthAttr) {
         text = text.substring(0, parseInt(maxLengthAttr, 10));
       }
@@ -138,7 +198,7 @@ class ApexFormFiller {
     }
   }
 
-  // ---------- TEXTAREAS (with boundary testing) ----------
+  // ---------- TEXTAREAS (label-matched, lorem fallback + boundary testing) ----------
   async fillTextAreas() {
     let areas = this.scope.locator("textarea.apex-item-textarea:visible");
     if ((await areas.count()) === 0) {
@@ -151,20 +211,38 @@ class ApexFormFiller {
       if (await area.isDisabled()) continue;
       if (await area.getAttribute("readonly")) continue;
 
+      const label = await this._getFieldLabel(area);
+      const matched = label !== null && this.fieldData[label] !== undefined;
+
+      if (matched) {
+        // Exact data match - fill it directly, no boundary mutation, since
+        // we want the real value to end up in the field, not a stress-test
+        // variant of it.
+        let text = String(this.fieldData[label]);
+        const maxLengthAttr = await area.getAttribute("maxlength");
+        if (maxLengthAttr) {
+          text = text.substring(0, parseInt(maxLengthAttr, 10));
+        }
+        await area.fill(text);
+        continue;
+      }
+
+      // No data match - lorem fallback, optionally boundary-tested since
+      // there's no "correct" value here to preserve anyway.
+      const loremBase = DUMMY_LOREM_TEXT;
       if (this.testBoundaries) {
-        await this._testTextAreaBoundaries(area, i);
+        await this._testTextAreaBoundaries(area, i, loremBase);
       } else {
-        await area.fill(this.staticData.description);
+        await area.fill(loremBase);
       }
     }
   }
 
-  async _testTextAreaBoundaries(area, index) {
+  async _testTextAreaBoundaries(area, index, base) {
     const maxLenAttr = await area.getAttribute("maxlength");
     const minLenAttr = await area.getAttribute("minlength");
     const maxLength = maxLenAttr ? parseInt(maxLenAttr, 10) : null;
     const minLength = minLenAttr ? parseInt(minLenAttr, 10) : null;
-    const base = this.staticData.description;
     const repeatToLength = (str, len) =>
       str.repeat(Math.ceil(len / str.length)).substring(0, len);
 
@@ -242,7 +320,13 @@ class ApexFormFiller {
         }
 
         if (optionCount > 1) {
-          await select.selectOption({ index: 1 }); // index 0 is usually "- Select -"
+          // Random selection (deliberately NOT label-matched): pick any
+          // index from 1 (skipping the "- Select -" placeholder at 0) up
+          // to the last real option, inclusive.
+          const min = 1;
+          const max = optionCount - 1;
+          const randomIndex = min + Math.floor(Math.random() * (max - min + 1));
+          await select.selectOption({ index: randomIndex });
           await this.page.waitForLoadState("networkidle").catch(() => {});
           handled[i] = true;
           progressed = true;
@@ -302,32 +386,28 @@ class ApexFormFiller {
   }
   // ---------- POST-SUBMIT ERROR CHECK ----------
   /**
-   * Call this right after clicking Create/Save/OK (and after the page has
-   * settled) to fail the test if Oracle APEX shows an error alert.
-   *
-   * By default it looks for the text "error has occurred" (case-insensitive)
-   * inside any visible alert/error region. Pass a different substring via
-   * `matchText` if a module surfaces a different phrase, or pass an empty
-   * string to fail on ANY visible error alert regardless of its wording.
-   *
-   * @param {string} [matchText] - Substring to match inside the alert text. Default: "error has occurred".
-   */
-  /**
    * Call this right after clicking Create/Save/OK to fail the test if
    * Oracle APEX shows an error alert/notification. Actively WAITS for the
    * alert to appear (rather than a single point-in-time check), since APEX's
    * notification toast can take a moment to render/animate in.
    *
-   * @param {string} [matchText] - Substring to match inside the alert text. Default: "error has occurred". Pass "" to fail on ANY visible alert regardless of wording.
+   * The text to match is now the caller's responsibility (no hardcoded
+   * default here) - pass it explicitly from your test file, e.g.
+   * `filler.assertNoErrorAlert("error has occurred")`. Pass "" to fail on
+   * ANY visible error alert regardless of its wording.
+   *
+   * @param {string} matchText - Substring to match inside the alert text (case-insensitive). Pass "" to match any visible alert.
    * @param {number} [timeoutMs] - How long to wait for an alert to appear before assuming success. Default 4000ms.
    */
-  async assertNoErrorAlert(matchText = "error has occurred", timeoutMs = 4000) {
+  async assertNoErrorAlert(matchText = "", timeoutMs = 4000) {
     // Oracle APEX Universal Theme renders validation/error messages inside
     // a standard ".a-Notification--error" block (wrapped in ".t-Alert-body"
-    // with role="alert"). This markup comes from the theme itself, so it's
-    // identical across every module - no per-module selector needed.
+    // with role="alert"). ".t-Alert-content" is the wrapping element around
+    // that in some layouts - included here too. This markup comes from the
+    // theme itself, so it's identical across every module - no per-module
+    // selector needed.
     const selector =
-      ".a-Notification--error, .t-Alert-body[role='alert'], [role='alert'], .t-Alert--danger, .apex-page-error, #APEX_ERROR_MESSAGE";
+      ".a-Notification--error, .t-Alert-content, .t-Alert-body[role='alert'], [role='alert'], .t-Alert--danger, .apex-page-error, #APEX_ERROR_MESSAGE";
 
     const deadline = Date.now() + timeoutMs;
 

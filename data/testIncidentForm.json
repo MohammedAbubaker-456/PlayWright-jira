@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Forklift Pedestrian Near Miss - Case 001",
+    "incident description": "A forklift was moving palletized material when a pedestrian entered the vehicle route. The operator braked and avoided contact. The event occurred in the Warehouse during the morning shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "CCTV footage, forklift inspection checklist, pedestrian-route photographs, witness statement, and supervisor notification were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Forklift Load Shift - Case 002",
+    "incident description": "A pallet shifted during forklift travel because the load was unevenly distributed. The operator stopped before the load fell. The event occurred in the Dispatch Area during routine operations. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Photographs of the pallet, forklift inspection record, load configuration, operator statement, and CCTV footage were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Forklift Reversing Near Miss - Case 003",
+    "incident description": "A forklift reversed from an aisle while a worker was walking behind it. The operator stopped after detecting the pedestrian. The event occurred in the Finished Goods Store during a routine inspection. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "CCTV footage, operator and pedestrian statements, reversing-alarm inspection record, and traffic plan were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Warehouse Slip Incident - Case 004",
+    "incident description": "A worker slipped on liquid near a storage rack but regained balance without falling. The event occurred in the Production Area during an emergency drill. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Floor photographs, housekeeping checklist, cleaning log, witness statement, and CCTV footage were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Warehouse Trip Incident - Case 005",
+    "incident description": "An employee tripped over packaging material left partially across a pedestrian walkway. No injury was reported. The event occurred in the Laboratory during the night shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Walkway photographs, housekeeping records, witness statement, and corrective-action record were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Chemical Transfer Spill - Case 006",
+    "incident description": "A transfer hose connection loosened during solvent transfer and released liquid into the containment area. The event occurred in the Process Area during material transfer. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Spill photographs, SDS, hose inspection record, maintenance history, operator statement, and spill report were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Chemical Container Leak - Case 007",
+    "incident description": "A leaking chemical container was discovered during a routine storage inspection and moved to secondary containment. The event occurred in the Maintenance Workshop during a scheduled shutdown. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Container photographs, SDS, storage checklist, inventory record, and waste documentation were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Chemical Splash Exposure - Case 008",
+    "incident description": "A worker received a small chemical splash on protective clothing while disconnecting a process line. The event occurred in the Waste Storage Area during the afternoon shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "SDS, PPE assessment, isolation record, worker statement, photographs, and first-aid record were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Chemical Odor Investigation - Case 009",
+    "incident description": "A strong solvent odor was reported near a chemical handling station and the area was restricted while the source was investigated. The event occurred in the Electrical Room during planned maintenance. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Air-monitoring results, SDS, ventilation inspection, operator statement, and area photographs were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "LOTO Deviation - Case 010",
+    "incident description": "Maintenance personnel identified that one hazardous energy source had not been included in the planned isolation. The event occurred in the Chemical Storage during contractor activity. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "LOTO procedure, isolation checklist, energy diagram, worker statements, and supervisor verification were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Unexpected Machine Movement - Case 011",
+    "incident description": "A machine moved unexpectedly after its normal stop control was activated during maintenance preparation. The event occurred in the Site Entrance during the morning shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Machine photographs, LOTO records, maintenance work order, operator statements, and control-system records were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Machine Guarding Defect - Case 012",
+    "incident description": "A damaged machine guard was found during inspection, creating access to a moving component. The event occurred in the Boiler House during routine operations. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Inspection photographs, maintenance work order, guarding checklist, operator statement, and repair record were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Machine Jam Intervention - Case 013",
+    "incident description": "An operator began preparing to clear a machine jam before recognizing that full energy isolation had not been completed. The event occurred in the Tank Farm during a routine inspection. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "CCTV footage, machine procedure, LOTO training record, operator statement, and supervisor interview were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Electrical Panel Access - Case 014",
+    "incident description": "An electrical panel door was found unsecured, creating potential exposure to energized components. The event occurred in the Fabrication Shop during an emergency drill. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Inspection photographs, electrical checklist, maintenance records, and corrective-action report were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Electrical Cable Damage - Case 015",
+    "incident description": "A damaged electrical cable was discovered near a production workstation and the equipment was isolated. The event occurred in the Outdoor Work Area during the night shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Cable photographs, electrical inspection record, maintenance work order, and equipment record were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Electrical Shock Near Miss - Case 016",
+    "incident description": "A worker reported a tingling sensation while handling equipment suspected of having an electrical fault. The event occurred in the Utility Area during material transfer. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Electrical test results, equipment history, worker statement, isolation record, and photographs were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Hot Work Spark Event - Case 017",
+    "incident description": "Sparks from grinding entered an area containing combustible material, but no ignition occurred. The event occurred in the Packaging Area during a scheduled shutdown. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Hot-work permit, photographs, fire-watch statement, area checklist, and toolbox-talk record were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Hot Work Fire - Case 018",
+    "incident description": "A small fire developed when hot-work sparks contacted combustible debris and was extinguished promptly. The event occurred in the Contractor Work Zone during the afternoon shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Hot-work permit, fire-watch record, photographs, CCTV footage, and extinguisher inspection were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Fire Alarm Activation - Case 019",
+    "incident description": "A fire alarm activated after smoke was detected near production equipment and personnel evacuated. The event occurred in the Loading Dock during planned maintenance. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Alarm event log, CCTV footage, evacuation records, equipment inspection, and emergency response report were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Blocked Emergency Exit - Case 020",
+    "incident description": "Materials were found stored in front of an emergency exit during a routine inspection. The event occurred in the Raw Material Store during contractor activity. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Inspection photographs, housekeeping checklist, storage records, and corrective-action evidence were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Emergency Drill Finding - Case 021",
+    "incident description": "During an evacuation drill, several employees did not follow the designated evacuation route. The event occurred in the Warehouse during the morning shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Drill attendance sheet, evacuation timing record, observer checklist, photographs, and drill evaluation were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Fire Extinguisher Access Obstruction - Case 022",
+    "incident description": "Materials were found blocking access to a fire extinguisher cabinet. The event occurred in the Dispatch Area during routine operations. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Inspection photographs, fire-equipment checklist, housekeeping record, and corrective-action report were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Confined Space Gas Reading - Case 023",
+    "incident description": "Atmospheric testing before confined-space entry identified an unsafe gas reading and entry was suspended. The event occurred in the Finished Goods Store during a routine inspection. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Gas-detector readings, calibration certificate, confined-space permit, isolation record, and supervisor statement were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Confined Space Permit Gap - Case 024",
+    "incident description": "A confined-space permit was incomplete during pre-entry verification and the team was stopped. The event occurred in the Production Area during an emergency drill. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Permit document, entry procedure, training records, gas-testing form, and supervisor verification were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Confined Space Communication Failure - Case 025",
+    "incident description": "Communication between an entrant and standby attendant was temporarily interrupted during an exercise. The event occurred in the Laboratory during the night shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Drill record, communication-equipment inspection, attendant statement, entry permit, and emergency procedure were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Work at Height Harness Defect - Case 026",
+    "incident description": "A worker found damaged stitching on a fall-arrest harness during pre-use inspection. The event occurred in the Process Area during material transfer. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Harness checklist, photographs, equipment register, manufacturer information, and replacement record were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Work at Height Edge Exposure - Case 027",
+    "incident description": "A worker approached an unprotected edge while carrying materials and the task was stopped. The event occurred in the Maintenance Workshop during a scheduled shutdown. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Photographs, observation report, work-at-height assessment, toolbox-talk record, and supervisor statement were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Scaffold Inspection Finding - Case 028",
+    "incident description": "A scaffold was found with an incomplete access arrangement during inspection and access was restricted. The event occurred in the Waste Storage Area during the afternoon shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Scaffold inspection tag, photographs, checklist, contractor statement, and corrective-action record were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Dropped Object Near Miss - Case 029",
+    "incident description": "A hand tool fell from an elevated work area and landed inside a controlled exclusion zone. The event occurred in the Electrical Room during planned maintenance. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Photographs, exclusion-zone inspection, worker statements, CCTV footage, and tool-control records were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  },
+  {
+    "name": "Manual Handling Strain - Case 030",
+    "incident description": "A worker reported discomfort after manually moving a heavy component from a low storage position. The event occurred in the Chemical Storage during contractor activity. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
+    "evidence description": "Task assessment, manual-handling observation, worker statement, equipment record, and ergonomic assessment were collected. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record."
+  }
+]

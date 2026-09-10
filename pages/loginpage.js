@@ -15,9 +15,9 @@ class LoginPage {
 
   async loginToApplication(username, password) {
     await this.page.goto(
-      // "https://157.20.214.83:8443/ords/r/corex10/soapboxcloud_landing_page/login?session&SESSION&tz=5:30",
+      "https://157.20.214.83:8443/ords/r/corex10/soapboxcloud_landing_page/login?session&SESSION&tz=5:30",
       // "https://157.20.214.83:8443/ords/r/corex23/soapboxcloud_landing_page/login?session&SESSION&tz=5:30"
-      "https://157.20.214.83:8443/ords/r/corex16/spbx-app-rca/create-rca?session=34554230539574",
+      // "https://157.20.214.83:8443/ords/r/corex16/spbx-app-rca/create-rca?session=34554230539574",
     );
 
     await this.page.locator(this.username).fill(username);
