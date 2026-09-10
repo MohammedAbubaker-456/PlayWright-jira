@@ -1,5 +1,3 @@
-
-
 const { expect } = require("@playwright/test");
 
 class LoginPage {
@@ -9,7 +7,7 @@ class LoginPage {
     // Login page elements
     this.username = "#P9999_USERNAME";
     this.password = "#P9999_PASSWORD";
-    this.loginButton = "#B7616596710487751030";
+    this.loginButton = "button:has-text('Sign In')";
 
     // After login
     this.goToModuleButton = "button:has-text('Go To Module')";
@@ -17,7 +15,9 @@ class LoginPage {
 
   async loginToApplication(username, password) {
     await this.page.goto(
-      "https://157.20.214.83:8443/ords/r/corex10/soapboxcloud_landing_page/login?session&SESSION&tz=5:30",
+      // "https://157.20.214.83:8443/ords/r/corex10/soapboxcloud_landing_page/login?session&SESSION&tz=5:30",
+      // "https://157.20.214.83:8443/ords/r/corex23/soapboxcloud_landing_page/login?session&SESSION&tz=5:30"
+      "https://157.20.214.83:8443/ords/r/corex16/spbx-app-rca/create-rca?session=34554230539574",
     );
 
     await this.page.locator(this.username).fill(username);

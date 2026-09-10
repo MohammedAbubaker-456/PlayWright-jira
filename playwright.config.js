@@ -107,8 +107,10 @@ module.exports = defineConfig({
         ...devices["Desktop Chrome"],
         channel: "chrome",
         viewport: {
-          width: 1920,
-          height: 1080,
+          // width: 1920,
+          // height: 1080,
+          width: 1528,
+          height: 732,
         },
       },
     },

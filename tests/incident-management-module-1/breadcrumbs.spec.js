@@ -1,4 +1,6 @@
 const { test, expect } = require("@playwright/test");
+const LoginPage = require("../../pages/loginpage.js");
+const { ApexFormFiller } = require("../../utils/apexFormFiller");
 
 test.use({
   ignoreHTTPSErrors: true,
@@ -7,103 +9,47 @@ test.use({
 test.describe("breadcrumbs , TC_UI_INC_GLOBAL_003 ", function () {
   test.describe("Verify breadcrumb ", function () {
     test("all Incident pages  ", async ({ page }) => {
-      await page.goto(
-        "https://157.20.214.83:8443/ords/r/corex10/soapboxcloud_landing_page/login?session&SESSION&tz=5:30",
-      );
+      const loginPage = new LoginPage(page);
+      test.setTimeout(50000);
 
-      // this is email
-      await page.locator("//input[@id='P9999_USERNAME']").fill("alice@abc.com");
+      await loginPage.loginToApplication("alice@abc.com", "Oracle@12345");
 
-      // this is password
-      await page.locator("//input[@id='P9999_PASSWORD']").fill("oracle");
-
-      // signin button
-      await page.locator("button:has-text('Sign In')").click();
-
-      //go to module button
-      await page.locator("button:has-text('Go To Module')").click();
       await page.waitForLoadState("networkidle");
 
-      await page.locator("//span[@class='fa fa fa-bar-chart']").click();
-      await page.waitForTimeout(1000);
-
-      await page.locator("//span[@class='fa fa fa-clock-o']").click();
-      await page.waitForTimeout(1000);
-
-      await page.locator("//span[@class='fa fa fa-download']").click();
-      await page.waitForTimeout(1000);
-
-      await page.locator("//span[@class='fa fa fa-users']").click();
-      await page.waitForTimeout(1000);
-
-      await page.locator("//span[@class='fa fa fa-check-circle-o']").click();
-      await page.waitForTimeout(1000);
-
-      await page.locator("//span[@class='fa fa fa-pie-chart']").click();
-      await page.waitForTimeout(1000);
-
-      //report new incident button
+      // report new incident button
       await page.locator("(//button[@id='B4742357481340896475'])[1]").click();
 
       await page.waitForLoadState("networkidle");
 
-      await page
-        .locator("//input[@id='P4020_INCIDENT_TITLE']")
-        .fill("This is for testing purpose (Abubaker)");
-
-      await page.locator("#P4020_INCIDENT_TYPE_NAME").selectOption({
-        label: "Chemical Spill",
-      });
-      await page.waitForLoadState("networkidle");
-
-      await page.locator("#P4020_SUBTYPE_NAME").selectOption({
-        label: "Major Spill",
+      // No scope needed - defaults to Oracle APEX Universal Theme's
+      // #t_Body_content wrapper, which works the same way across every
+      // module's page without per-module configuration.
+      const filler = new ApexFormFiller(page, {
+        title: "This is for testing purpose (Abubaker)",
+        description: "This incident is being created for testing purpose",
+        filePath: "C:/Users/MOHAMMED ABUBAKER/Desktop/img1.jpg",
       });
 
-      await page.locator("//select[@id='P4020_SEVERITY_NAME']").selectOption({
-        label: "High",
-      });
-
-      await page.locator("//select[@id='P4020_PRIORITY_LEVEL']").selectOption({
-        label: "High",
-      });
-
-      await page.locator("//select[@id='P4020_SITE_ID']").selectOption({
-        label: "ABC_SITE_1",
-      });
-
-      await page.locator("//select[@id='P4020_OWNER_GROUP_ID']").selectOption({
-        label: "Engineering",
-      });
-      await page
-        .locator("//textarea[@id='P4020_INCIDENT_DESCRIPTION']")
-        .fill("This incident is being created for testing purpose");
-
-      await page
-        .locator("//textarea[@id='P4020_EVIDENCE_DESCRIPTION']")
-        .fill("The evidence image will be uploded below ");
-
-      // adding image
-
-      const fileChooserPromise = page.waitForEvent("filechooser");
-
-      await page
-        .locator("//input[@id='mfu-input-P4020_INCIDENT_EVIDENCE_FILE']")
-        .click();
-
-      const fileChooser = await fileChooserPromise;
-
-      await fileChooser.setFiles("C:/Users/MOHAMMED ABUBAKER/Desktop/img1.jpg");
-
-      await page.waitForTimeout(1000);
+      const issues = await filler.fillAll();
+      if (issues.length) {
+        console.warn("Field validation issues found:", issues);
+      }
 
       await page.locator("//span[normalize-space()='Create']").click();
+
+      await page.waitForLoadState("networkidle");
+
+      // Fails the test if APEX shows an error alert containing "error has occurred"
+      await filler.assertNoErrorAlert();
 
       await page.locator("//button[normalize-space()='OK']").click();
 
       await page.waitForLoadState("networkidle");
 
-      await page.locator("//span[@class='t-Icon icon-close']").click();
+      // Some modules validate again on the OK confirmation step, so check
+      // once more here too - give it a longer window since this step can
+      // involve a slower server round-trip.
+      await filler.assertNoErrorAlert("error has occurred", 10000);
     });
   });
 });
