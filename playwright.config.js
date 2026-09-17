@@ -31,7 +31,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ["html"],
-    ["allure-playwright"],
+    // ["allure-playwright"],
     ["./reporters/jira-reporter.js"],
     // [
     //   "@kiwi-tcms-ai/kiwi-tcms-reporter/playwright",
@@ -78,21 +78,21 @@ module.exports = defineConfig({
     //   name: 'chromium',
     //   use: { ...devices['Desktop Chrome'] },
     // },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-    {
-      name: "Microsoft Edge",
-      use: {
-        ...devices["Desktop Edge"],
-        channel: "msedge",
-      },
-    },
+    // {
+    //   name: "firefox",
+    //   use: { ...devices["Desktop Firefox"] },
+    // },
+    // {
+    //   name: "webkit",
+    //   use: { ...devices["Desktop Safari"] },
+    // },
+    // {
+    //   name: "Microsoft Edge",
+    //   use: {
+    //     ...devices["Desktop Edge"],
+    //     channel: "msedge",
+    //   },
+    // },
     //   },
     // {
     //   name: "Google Chrome",

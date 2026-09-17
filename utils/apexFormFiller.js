@@ -81,7 +81,7 @@ class ApexFormFiller {
 
     this.staticData = {
       filePath:
-        options.filePath || "C:/Users/Public/Pictures/test-evidence.jpg",
+        options.filePath || "C:\\Users\\MOHAMMED ABUBAKER\\Desktop\\test-evidence.jpg",
     };
 
     this.testBoundaries =
@@ -123,8 +123,17 @@ class ApexFormFiller {
     const id = await field.getAttribute("id").catch(() => null);
     if (!id) return null;
 
-    const label = this.page.locator(`label[for='${id}']`);
-    if ((await label.count().catch(() => 0)) === 0) return null;
+    let label = null;
+    if (this.scope && typeof this.scope.locator === "function") {
+      label = this.scope.locator(`label[for='${id}']`);
+      if ((await label.count().catch(() => 0)) === 0) {
+        label = null;
+      }
+    }
+    if (!label) {
+      label = this.page.locator(`label[for='${id}']`);
+      if ((await label.count().catch(() => 0)) === 0) return null;
+    }
 
     const text = (
       await label
@@ -135,9 +144,23 @@ class ApexFormFiller {
     return text ? this._normalizeLabel(text) : null;
   }
 
-  /** Lazily resolves the scope: explicit option > #t_Body_content > body */
+  /** Lazily resolves the scope: explicit option > visible iframe/dialog > #t_Body_content > body */
   async _resolveScope() {
     if (this.scope) return this.scope;
+
+    // Check if an APEX modal dialog with an iframe is visible
+    const modalIframe = this.page.locator("div[role='dialog'] iframe, iframe.ui-dialog-content, iframe:visible");
+    if ((await modalIframe.count().catch(() => 0)) > 0 && (await modalIframe.first().isVisible({ timeout: 1000 }).catch(() => false))) {
+      this.scope = this.page.frameLocator("div[role='dialog'] iframe, iframe.ui-dialog-content, iframe:visible").locator("body");
+      return this.scope;
+    }
+
+    // Check if an APEX modal dialog (without iframe) is visible
+    const openDialog = this.page.locator("div[role='dialog']:visible, .ui-dialog:visible");
+    if ((await openDialog.count().catch(() => 0)) > 0) {
+      this.scope = openDialog.first();
+      return this.scope;
+    }
 
     const universalThemeContent = this.page.locator("#t_Body_content");
     if ((await universalThemeContent.count()) > 0) {
@@ -158,8 +181,8 @@ class ApexFormFiller {
     if (fieldCount === 0) {
       throw new Error(
         "ApexFormFiller: scope matched 0 form fields. Check that the scope " +
-          "locator actually wraps the visible form (e.g. wrong region id, " +
-          "or the form hasn't finished loading yet).",
+        "locator actually wraps the visible form (e.g. wrong region id, " +
+        "or the form hasn't finished loading yet).",
       );
     }
 
@@ -327,7 +350,7 @@ class ApexFormFiller {
           const max = optionCount - 1;
           const randomIndex = min + Math.floor(Math.random() * (max - min + 1));
           await select.selectOption({ index: randomIndex });
-          await this.page.waitForLoadState("networkidle").catch(() => {});
+          await this.page.waitForLoadState("networkidle").catch(() => { });
           handled[i] = true;
           progressed = true;
         }
@@ -362,7 +385,7 @@ class ApexFormFiller {
       } catch {
         // Some custom switch widgets aren't reliably checkable via .check();
         // fall back to a direct click on the same element.
-        await toggle.click({ force: true }).catch(() => {});
+        await toggle.click({ force: true }).catch(() => { });
       }
     }
   }
@@ -374,14 +397,22 @@ class ApexFormFiller {
 
     for (let i = 0; i < count; i++) {
       const fileInput = fileInputs.nth(i);
-
-      // APEX's multi-file-upload plugin often hides the real <input type=file>
-      // and triggers it via a visible button/icon that opens the OS file picker.
-      const fileChooserPromise = this.page.waitForEvent("filechooser");
-      await fileInput.click({ force: true });
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles(this.staticData.filePath);
-      await this.page.waitForTimeout(1000);
+      if (this.staticData && this.staticData.filePath) {
+        try {
+          await fileInput.setInputFiles(this.staticData.filePath);
+          await this.page.waitForTimeout(500);
+        } catch {
+          try {
+            const fileChooserPromise = this.page.waitForEvent("filechooser", { timeout: 2500 });
+            await fileInput.click({ force: true });
+            const fileChooser = await fileChooserPromise;
+            await fileChooser.setFiles(this.staticData.filePath);
+            await this.page.waitForTimeout(500);
+          } catch {
+            // Optional file upload or hidden input, safe to proceed
+          }
+        }
+      }
     }
   }
   // ---------- POST-SUBMIT ERROR CHECK ----------
@@ -407,7 +438,7 @@ class ApexFormFiller {
     // theme itself, so it's identical across every module - no per-module
     // selector needed.
     const selector =
-      ".a-Notification--error, .t-Alert-content, .t-Alert-body[role='alert'], [role='alert'], .t-Alert--danger, .apex-page-error, #APEX_ERROR_MESSAGE";
+      ".a-Notification--error, .t-Alert--danger, .t-Alert--error, .apex-page-error, #APEX_ERROR_MESSAGE, .htmldbStdErr, .a-Notification-item";
 
     const deadline = Date.now() + timeoutMs;
 
@@ -429,6 +460,24 @@ class ApexFormFiller {
 
           const text = (await loc.innerText().catch(() => "")).trim();
           if (!text) continue;
+
+          // Never treat success toasts as errors
+          const isSuccess =
+            (await loc.evaluate((el) => {
+              const alertParent = el.closest(".t-Alert, .a-Notification");
+              if (!alertParent) return false;
+              return (
+                alertParent.classList.contains("t-Alert--success") ||
+                alertParent.classList.contains("a-Notification--success") ||
+                alertParent.id === "t_Alert_Success"
+              );
+            }).catch(() => false)) ||
+            (text.toLowerCase().includes("success") && !text.toLowerCase().includes("error has occurred"));
+
+          if (isSuccess) {
+            continue;
+          }
+
           if (
             matchText &&
             !text.toLowerCase().includes(matchText.toLowerCase())

@@ -1,0 +1,106 @@
+{
+  "name": "Near-Miss Reporting & Analysis Operational Workflow",
+  "module": "nearMiss",
+  "version": "1.0.0",
+  "start": "REPORT_NEAR_MISS",
+  "maxAttempts": 15,
+  "maxStateVisits": {
+    "REPORT_NEAR_MISS": 2,
+    "EDIT_NEAR_MISS": 3,
+    "REVIEW_AND_CLASSIFY": 3,
+    "INVESTIGATION_AND_RCA": 3,
+    "NEAR_MISS_CLOSURE_REVIEW": 3
+  },
+  "states": {
+    "REPORT_NEAR_MISS": {
+      "type": "form",
+      "page": "nearMissReporting",
+      "formKey": "nearMissData",
+      "next": "SUBMIT_NEAR_MISS"
+    },
+    "SUBMIT_NEAR_MISS": {
+      "type": "submit",
+      "page": "nearMissReporting",
+      "button": "submitNearMissButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "REVIEW_AND_CLASSIFY",
+      "assertions": [
+        {
+          "type": "noApexError"
+        }
+      ]
+    },
+    "REVIEW_AND_CLASSIFY": {
+      "type": "review",
+      "page": "nearMissReview",
+      "strategy": "approve",
+      "actions": [
+        "approve",
+        "reject",
+        "sendBack"
+      ],
+      "buttons": {
+        "approve": "approveForInvestigationButton",
+        "reject": "rejectDuplicateButton",
+        "sendBack": "sendBackClarificationButton"
+      },
+      "commentInput": "nearMissCommentInput",
+      "comments": {
+        "approve": "Approved for Investigation: High risk potential identified. RCA team assigned.",
+        "reject": "Rejected: Identified as duplicate of existing observation record.",
+        "sendBack": "Clarification Requested: Please specify the exact valve identifier and line number."
+      },
+      "transitions": {
+        "approve": "INVESTIGATION_AND_RCA",
+        "reject": "NEAR_MISS_REJECTED",
+        "sendBack": "EDIT_NEAR_MISS"
+      }
+    },
+    "EDIT_NEAR_MISS": {
+      "type": "form",
+      "page": "nearMissReporting",
+      "formKey": "nearMissData",
+      "next": "SUBMIT_NEAR_MISS"
+    },
+    "INVESTIGATION_AND_RCA": {
+      "type": "form",
+      "page": "nearMissInvestigation",
+      "formKey": "rcaData",
+      "next": "CAPA_CREATION"
+    },
+    "CAPA_CREATION": {
+      "type": "form",
+      "formKey": "capaData",
+      "next": "NEAR_MISS_CLOSURE_REVIEW"
+    },
+    "NEAR_MISS_CLOSURE_REVIEW": {
+      "type": "closureReview",
+      "page": "nearMissClosure",
+      "actions": [
+        "approve",
+        "reject"
+      ],
+      "buttons": {
+        "approve": "approveNearMissClosureButton",
+        "reject": "reopenNearMissButton"
+      },
+      "comments": {
+        "approve": "Closure Governance Approved: CAPA implemented and verified effective.",
+        "reject": "Case Reopened: Corrective action verification audit failed. Root cause re-evaluation needed."
+      },
+      "transitions": {
+        "approve": "NEAR_MISS_CLOSED_SUCCESS",
+        "reject": "INVESTIGATION_AND_RCA"
+      }
+    },
+    "NEAR_MISS_CLOSED_SUCCESS": {
+      "type": "complete",
+      "page": "nearMissLanding"
+    },
+    "NEAR_MISS_REJECTED": {
+      "type": "rejected",
+      "page": "nearMissLanding"
+    }
+  }
+}

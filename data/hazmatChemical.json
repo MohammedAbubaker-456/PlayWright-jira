@@ -1,0 +1,25 @@
+{
+  "chemicalData": {
+    "Chemical Name": "Acetone Technical Grade",
+    "Trade Name": "Acetone 99.5%",
+    "CAS Number": "67-64-1",
+    "UN Number": "UN1090",
+    "Physical State": "Liquid",
+    "Hazard Classification": "Flammable Liquid",
+    "Flash Point (°C)": "-20",
+    "Boiling Point (°C)": "56",
+    "Primary Hazard": "Flammable",
+    "Storage Class": "Flammable Storage",
+    "Maximum Storage Quantity": "500",
+    "Unit of Measure": "Liters",
+    "Storage Location": "Warehouse Chemical Bay 3",
+    "Chemical Description": "High purity organic solvent for industrial cleaning, degreasing, and chemical synthesis.",
+    "Handling Precautions": "Ensure local exhaust ventilation. Keep away from heat, sparks, open flames, and hot surfaces.",
+    "First Aid Measures": "In case of skin contact, rinse with plenty of water. If inhaled, remove to fresh air."
+  },
+  "chemicalUpdateData": {
+    "Chemical Description": "High purity organic solvent - REVISED: added updated secondary containment and grounding protocols.",
+    "Handling Precautions": "Ensure local exhaust ventilation. Keep away from heat, sparks, open flames. Ground all containers during transfer.",
+    "Storage Location": "Warehouse Chemical Bay 3 - Secondary Containment Unit A"
+  }
+}

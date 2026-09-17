@@ -1,0 +1,52 @@
+{
+  "incidentReportingData": {
+    "Name of the Incident": "Chemical Container Handling Operational Incident - Automated Run",
+    "Incident Description": "Operator noticed a damaged container during transfer. Area was isolated immediately.",
+    "Evidence Description": "Photographs of container, area inspection log, and supervisor notification record.",
+    "Incident Type": "Spill/Leak",
+    "Subtype": "Potential Spill",
+    "Severity": "High",
+    "Priority Level": "High",
+    "Site": "ABC_SITE_1",
+    "Owner Group": "Engineering"
+  },
+  "interviewData": {
+    "Interviewee Name": "John Doe",
+    "Statement": "Observed the condition during routine morning walkthrough and immediately triggered safety containment protocol.",
+    "Findings": "All safety protocols were adhered to during containment.",
+    "Interview Notes": "Interview conducted without discrepancies."
+  },
+  "investigationApprovalData": {
+    "Reviewer Comments": "Investigation findings and Chain of Custody verified complete. Approved for closure initiation.",
+    "Approval Comments": "Investigation is thorough and evidence integrity has been signed and locked.",
+    "Admin Comment": "Investigation verified and approved."
+  },
+  "closureInitiationData": {
+    "Closure Justification": "Corrective containment actions executed and validated effective by safety team.",
+    "Lessons Learned": "Enhanced routine inspection checklist adopted.",
+    "Closure Notes": "Ready for final closure governance approval."
+  },
+  "closureApprovalData": {
+    "Closure Authorization Comments": "Final closure approved. Corrective actions verified effective and incident records locked.",
+    "Admin Comment": "Closure Authorized: Corrective actions completed and effectiveness verified.",
+    "Approval Comments": "Closure approved successfully."
+  },
+  "investigationScopeData": {
+    "Investigation Scope": "Comprehensive operational investigation to identify root cause, evaluate containment controls, and verify corrective preventive actions."
+  },
+  "investigationData": {
+    "Investigation Scope": "Comprehensive operational investigation to identify root cause, evaluate containment controls, and verify corrective preventive actions.",
+    "Root Cause Analysis": "Substandard container failed under normal load stress.",
+    "Investigation Findings": "Inspection protocol at receiving dock did not flag hairline crack.",
+    "Contributing Factors": "High warehouse humidity weakened material strength."
+  },
+  "resolutionData": {
+    "Corrective Action Plan": "Implement secondary container inspection at unloading bay.",
+    "Assigned Responsible": "john@abc.com",
+    "Target Completion Date": "2026-10-30"
+  },
+  "closureData": {
+    "Closure Authorization Comments": "All corrective actions verified. Inspection checklist updated.",
+    "Lessons Learned": "Include container structural integrity in QA receiving checklist."
+  }
+}

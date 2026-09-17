@@ -1,0 +1,94 @@
+{
+  "name": "Contractor & Supplier Management (CSM) Operational Workflow",
+  "module": "csm",
+  "version": "1.0.0",
+  "start": "ONBOARDING_REQUEST",
+  "maxAttempts": 15,
+  "maxStateVisits": {
+    "ONBOARDING_REQUEST": 2,
+    "EDIT_ONBOARDING": 3,
+    "REVIEW_AND_APPROVAL": 3
+  },
+  "states": {
+    "ONBOARDING_REQUEST": {
+      "type": "form",
+      "page": "csmOnboardingRequest",
+      "formKey": "onboardingData",
+      "next": "SUBMIT_ONBOARDING"
+    },
+    "SUBMIT_ONBOARDING": {
+      "type": "submit",
+      "page": "csmOnboardingRequest",
+      "button": "submitOnboardingButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "REVIEW_AND_APPROVAL",
+      "assertions": [
+        {
+          "type": "noApexError"
+        }
+      ]
+    },
+    "REVIEW_AND_APPROVAL": {
+      "type": "review",
+      "page": "csmReviewApproval",
+      "actions": [
+        "approve",
+        "reject",
+        "sendBack"
+      ],
+      "buttons": {
+        "approve": "csmApproveButton",
+        "reject": "csmRejectButton",
+        "sendBack": "csmReturnButton"
+      },
+      "commentInput": "csmCommentInput",
+      "comments": {
+        "approve": "CSM Approved: Contractor safety qualifications, insurance, and risk assessment accepted.",
+        "reject": "CSM Rejected: Inadequate insurance limits and unacceptable past safety record.",
+        "sendBack": "CSM Returned for Corrections: Please upload ISO 45001 certification and update worker roster."
+      },
+      "transitions": {
+        "approve": "DOCUMENT_AND_WORKER_CONTROL",
+        "reject": "ONBOARDING_REJECTED",
+        "sendBack": "EDIT_ONBOARDING"
+      }
+    },
+    "EDIT_ONBOARDING": {
+      "type": "form",
+      "page": "csmOnboardingRequest",
+      "formKey": "onboardingData",
+      "next": "SUBMIT_ONBOARDING"
+    },
+    "DOCUMENT_AND_WORKER_CONTROL": {
+      "type": "form",
+      "page": "csmDocumentControl",
+      "formKey": "complianceData",
+      "next": "VERIFY_COMPLIANCE"
+    },
+    "VERIFY_COMPLIANCE": {
+      "type": "submit",
+      "page": "csmDocumentControl",
+      "button": "verifyDocumentsButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "SITE_ACCESS_READINESS"
+    },
+    "SITE_ACCESS_READINESS": {
+      "type": "submit",
+      "page": "csmSiteAccess",
+      "button": "grantAccessButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "ACTIVE_APPROVED_CONTRACTOR"
+    },
+    "ACTIVE_APPROVED_CONTRACTOR": {
+      "type": "complete",
+      "page": "csmLanding"
+    },
+    "ONBOARDING_REJECTED": {
+      "type": "rejected",
+      "page": "csmLanding"
+    }
+  }
+}

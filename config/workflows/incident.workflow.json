@@ -1,0 +1,223 @@
+{
+  "name": "Incident Management Operational Workflow",
+  "module": "incident",
+  "version": "2.0.0",
+  "start": "REPORT_INCIDENT",
+  "maxAttempts": 40,
+  "maxStateVisits": {
+    "REPORT_INCIDENT": 3,
+    "SUBMIT_INCIDENT": 3,
+    "SELECT_OPEN_INCIDENT": 3,
+    "ASSIGN_INCIDENT": 3,
+    "START_INVESTIGATION": 3,
+    "FILL_INVESTIGATION_SCOPE": 3,
+    "CLICK_START_INVESTIGATION": 3,
+    "NAV_INVESTIGATION_TAB": 3,
+    "CLICK_GO_TO_INVESTIGATION": 3,
+    "NAV_EVIDENCE_TAB": 3,
+    "VERIFY_COC_ACTION": 3,
+    "SIGN_AND_LOCK_RECORD": 3,
+    "NAV_INTERVIEWS_TAB": 3,
+    "CLICK_ADD_INTERVIEW": 3,
+    "FILL_INTERVIEW_FORM": 3,
+    "SAVE_INTERVIEW": 3,
+    "SUBMIT_FOR_REVIEW": 3,
+    "NAV_PENDING_APPROVALS": 3,
+    "SELECT_PENDING_INVESTIGATION": 3,
+    "FILL_INVESTIGATION_APPROVAL": 3,
+    "APPROVE_INVESTIGATION": 3,
+    "NAV_DASHBOARD_FOR_CLOSURE": 3,
+    "NAV_CLOSURE_TAB": 3,
+    "CLICK_INITIATE_CLOSURE": 3,
+    "FILL_CLOSURE_INITIATION": 3,
+    "SUBMIT_CLOSURE_FOR_APPROVAL": 3,
+    "NAV_PENDING_CLOSURES": 3,
+    "FILL_CLOSURE_APPROVAL": 3,
+    "APPROVE_CLOSURE": 3,
+    "INCIDENT_CLOSED": 2
+  },
+  "states": {
+    "REPORT_INCIDENT": {
+      "type": "form",
+      "page": "incidentReporting",
+      "formKey": "incidentReportingData",
+      "next": "SUBMIT_INCIDENT"
+    },
+    "SUBMIT_INCIDENT": {
+      "type": "submit",
+      "page": "incidentReporting",
+      "button": "incidentCreateButton",
+      "modalConfirm": true,
+      "catchErrors": true,
+      "checkErrors": true,
+      "next": "SELECT_OPEN_INCIDENT"
+    },
+    "SELECT_OPEN_INCIDENT": {
+      "type": "tableAction",
+      "page": "incidentDashboard",
+      "forceNavigation": true,
+      "status": "Open",
+      "action": "dashboardOpenIncidentEye",
+      "next": "ASSIGN_INCIDENT"
+    },
+    "ASSIGN_INCIDENT": {
+      "type": "assignment",
+      "triggerButton": "assignButton",
+      "frame": "assignModalIframe",
+      "userField": "assignUserSelect",
+      "submitButton": "assignConfirmButton",
+      "next": "START_INVESTIGATION"
+    },
+    "START_INVESTIGATION": {
+      "type": "action",
+      "target": "investigationTab",
+      "next": "FILL_INVESTIGATION_SCOPE"
+    },
+    "FILL_INVESTIGATION_SCOPE": {
+      "type": "form",
+      "formKey": "investigationScopeData",
+      "testBoundaries": false,
+      "next": "CLICK_START_INVESTIGATION"
+    },
+    "CLICK_START_INVESTIGATION": {
+      "type": "action",
+      "target": "startInvestigationButton",
+      "modalConfirm": true,
+      "catchErrors": true,
+      "checkErrors": true,
+      "next": "NAV_INVESTIGATION_TAB"
+    },
+    "NAV_INVESTIGATION_TAB": {
+      "type": "action",
+      "target": "investigationTab",
+      "next": "CLICK_GO_TO_INVESTIGATION"
+    },
+    "CLICK_GO_TO_INVESTIGATION": {
+      "type": "action",
+      "target": "goToInvestigationButton",
+      "next": "NAV_EVIDENCE_TAB"
+    },
+    "NAV_EVIDENCE_TAB": {
+      "type": "action",
+      "target": "evidenceTab",
+      "next": "VERIFY_COC_ACTION"
+    },
+    "VERIFY_COC_ACTION": {
+      "type": "action",
+      "target": "evidenceActionButton",
+      "menuItem": "verifyCocOption",
+      "next": "SIGN_AND_LOCK_RECORD"
+    },
+    "SIGN_AND_LOCK_RECORD": {
+      "type": "action",
+      "target": "signAndLockRecordButton",
+      "modalConfirm": true,
+      "next": "NAV_INTERVIEWS_TAB"
+    },
+    "NAV_INTERVIEWS_TAB": {
+      "type": "action",
+      "target": "interviewsTab",
+      "next": "CLICK_ADD_INTERVIEW"
+    },
+    "CLICK_ADD_INTERVIEW": {
+      "type": "action",
+      "target": "addInterviewButton",
+      "next": "FILL_INTERVIEW_FORM"
+    },
+    "FILL_INTERVIEW_FORM": {
+      "type": "form",
+      "formKey": "interviewData",
+      "next": "SAVE_INTERVIEW"
+    },
+    "SAVE_INTERVIEW": {
+      "type": "action",
+      "target": "saveInterviewButton",
+      "modalConfirm": true,
+      "next": "SUBMIT_FOR_REVIEW"
+    },
+    "SUBMIT_FOR_REVIEW": {
+      "type": "action",
+      "target": "submitForReviewButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "NAV_PENDING_APPROVALS"
+    },
+    "NAV_PENDING_APPROVALS": {
+      "type": "action",
+      "page": "pendingApprovals",
+      "forceNavigation": true,
+      "target": "pendingInvestigationsTab",
+      "next": "SELECT_PENDING_INVESTIGATION"
+    },
+    "SELECT_PENDING_INVESTIGATION": {
+      "type": "tableAction",
+      "status": "In Progress",
+      "action": "pendingInvestigationEye",
+      "next": "FILL_INVESTIGATION_APPROVAL"
+    },
+    "FILL_INVESTIGATION_APPROVAL": {
+      "type": "form",
+      "formKey": "investigationApprovalData",
+      "next": "APPROVE_INVESTIGATION"
+    },
+    "APPROVE_INVESTIGATION": {
+      "type": "action",
+      "target": "approveInvestigationButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "NAV_DASHBOARD_FOR_CLOSURE"
+    },
+    "NAV_DASHBOARD_FOR_CLOSURE": {
+      "type": "tableAction",
+      "page": "incidentDashboard",
+      "forceNavigation": true,
+      "action": "dashboardIncidentEye",
+      "next": "NAV_CLOSURE_TAB"
+    },
+    "NAV_CLOSURE_TAB": {
+      "type": "action",
+      "target": "closureTab",
+      "next": "CLICK_INITIATE_CLOSURE"
+    },
+    "CLICK_INITIATE_CLOSURE": {
+      "type": "action",
+      "target": "initiateClosureButton",
+      "next": "FILL_CLOSURE_INITIATION"
+    },
+    "FILL_CLOSURE_INITIATION": {
+      "type": "form",
+      "formKey": "closureInitiationData",
+      "next": "SUBMIT_CLOSURE_FOR_APPROVAL"
+    },
+    "SUBMIT_CLOSURE_FOR_APPROVAL": {
+      "type": "action",
+      "target": "submitForApprovalButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "NAV_PENDING_CLOSURES"
+    },
+    "NAV_PENDING_CLOSURES": {
+      "type": "tableAction",
+      "page": "pendingApprovals",
+      "forceNavigation": true,
+      "action": "pendingClosureEye",
+      "next": "FILL_CLOSURE_APPROVAL"
+    },
+    "FILL_CLOSURE_APPROVAL": {
+      "type": "form",
+      "formKey": "closureApprovalData",
+      "next": "APPROVE_CLOSURE"
+    },
+    "APPROVE_CLOSURE": {
+      "type": "action",
+      "target": "approveClosureButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "INCIDENT_CLOSED"
+    },
+    "INCIDENT_CLOSED": {
+      "type": "complete",
+      "page": "incidentDashboard"
+    }
+  }
+}
