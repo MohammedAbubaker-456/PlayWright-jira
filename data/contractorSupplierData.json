@@ -1,0 +1,27 @@
+{
+  "onboardingData": {
+    "Contractor Name": "Apex Engineering & Maintenance Solutions Ltd",
+    "Company Registration Number": "REG-2026-88910",
+    "Contact Person": "David Miller",
+    "Email": "david.miller@apex-engineering.com",
+    "Phone Number": "+1-555-019-2834",
+    "Service Category": "High Risk - Hazardous Material Maintenance",
+    "Primary Work Scope": "Preventive maintenance on chemical storage reactors and secondary containment vessels.",
+    "Risk Classification": "High",
+    "Applicable Standards": "ISO 45001, OSHA 1910",
+    "Initial SLA (Days)": "14"
+  },
+  "reviewData": {
+    "EHS Reviewer Comments": "Safety manual and OSHA recordable rates reviewed. Approved for on-site high risk operations.",
+    "Procurement Approval": "Commercial terms, rate cards, and vendor credentials verified.",
+    "Legal Clearance": "Non-disclosure agreement and liability indemnification signed."
+  },
+  "complianceData": {
+    "Worker ID": "CW-2026-044",
+    "Worker Name": "Marcus Vance",
+    "Trade Qualification": "Certified Industrial Pipefitter",
+    "Medical Fitness Clearance": "Cleared - Fit for Confined Space & Hazmat Duty",
+    "Induction Training Status": "Completed",
+    "Site Access Card": "SAC-99821-ACTIVE"
+  }
+}

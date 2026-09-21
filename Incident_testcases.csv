@@ -1,0 +1,311 @@
+﻿Work Type,Summary,Description,Test Case ID,Module,Preconditions,Test Steps,Expected Result,Automation Status,Execution Status,Last Execution Date,Last Execution Environment
+Test Case,Verify Incident Management menu visibility,"Page / Area: Global Navigation
+Test Scenario: Verify Incident Management menu visibility",TC_UI_INC_GLOBAL_001,Incident Management,,Login and open main navigation,Incident Management menu is visible to authorized users,Not Automated,Not Run,,
+Test Case,Verify unauthorized users do not see Incident Management menu,"Page / Area: Global Navigation
+Test Scenario: Verify unauthorized users do not see Incident Management menu",TC_UI_INC_GLOBAL_002,Incident Management,,Login as unauthorized user,Incident Management menu is hidden or disabled,Not Automated,Not Run,,
+Test Case,Verify breadcrumb trail on all Incident pages,"Page / Area: Breadcrumbs
+Test Scenario: Verify breadcrumb trail on all Incident pages",TC_UI_INC_GLOBAL_003,Incident Management,,"Open Dashboard, Reporting, Details, SLA Monitoring",Breadcrumb shows correct hierarchy such as Home > Incident Management > Page Name,Not Automated,Not Run,,
+Test Case,Verify consistent page title format,"Page / Area: Page Header
+Test Scenario: Verify consistent page title format",TC_UI_INC_GLOBAL_004,Incident Management,,Open all Incident pages,"Each page has clear title, module context, and action buttons",Not Automated,Not Run,,
+Test Case,Verify desktop layout,"Page / Area: Responsive Layout
+Test Scenario: Verify desktop layout",TC_UI_INC_GLOBAL_005,Incident Management,,Open module at 1920x1080,"Regions align correctly, no overlapping or truncation",Not Automated,Not Run,,
+Test Case,Verify tablet layout,"Page / Area: Responsive Layout
+Test Scenario: Verify tablet layout",TC_UI_INC_GLOBAL_006,Incident Management,,Open module at tablet resolution,"Cards, grids, tabs, and buttons resize correctly",Not Automated,Not Run,,
+Test Case,Verify mobile layout,"Page / Area: Responsive Layout
+Test Scenario: Verify mobile layout",TC_UI_INC_GLOBAL_007,Incident Management,,Open module at mobile resolution,"Layout stacks correctly, key actions remain accessible",Not Automated,Not Run,,
+Test Case,Verify consistent colors and badges,"Page / Area: Theme Consistency
+Test Scenario: Verify consistent colors and badges",TC_UI_INC_GLOBAL_008,Incident Management,,Review severity/status/SLA badges across pages,Same statuses use same visual treatment across the module,Not Automated,Not Run,,
+Test Case,Verify loading spinner/indicator,"Page / Area: Loading State
+Test Scenario: Verify loading spinner/indicator",TC_UI_INC_GLOBAL_009,Incident Management,,Refresh dashboard or large grid,Loading indicator appears and disappears correctly,Not Automated,Not Run,,
+Test Case,Verify empty state display,"Page / Area: Empty State
+Test Scenario: Verify empty state display",TC_UI_INC_GLOBAL_010,Incident Management,,Apply filters returning no records,Friendly “No incidents found” message appears,Not Automated,Not Run,,
+Test Case,Verify dashboard loads successfully,"Page / Area: Dashboard
+Test Scenario: Verify dashboard loads successfully",TC_UI_INC_DASH_001,Incident Management,,Open Incident Dashboard,Dashboard loads without UI errors,Not Automated,Not Run,,
+Test Case,Verify summary cards display,"Page / Area: Summary Cards
+Test Scenario: Verify summary cards display",TC_UI_INC_DASH_002,Incident Management,,View dashboard top section,"Total, Open, Critical, Overdue, SLA Breach cards display",Not Automated,Not Run,,
+Test Case,Verify card alignment,"Page / Area: Summary Cards
+Test Scenario: Verify card alignment",TC_UI_INC_DASH_003,Incident Management,,Resize browser,Cards remain aligned and responsive,Not Automated,Not Run,,
+Test Case,Verify card drill-down,"Page / Area: Summary Cards
+Test Scenario: Verify card drill-down",TC_UI_INC_DASH_004,Incident Management,,Click “Critical Incidents” card,Incident list filters to Critical incidents,Not Automated,Not Run,,
+Test Case,Verify incident trend chart renders,"Page / Area: Charts
+Test Scenario: Verify incident trend chart renders",TC_UI_INC_DASH_005,Incident Management,,Open dashboard,Trend chart displays correctly,Not Automated,Not Run,,
+Test Case,Verify severity chart renders,"Page / Area: Charts
+Test Scenario: Verify severity chart renders",TC_UI_INC_DASH_006,Incident Management,,Open dashboard,Severity distribution chart displays correct labels,Not Automated,Not Run,,
+Test Case,Verify status chart renders,"Page / Area: Charts
+Test Scenario: Verify status chart renders",TC_UI_INC_DASH_007,Incident Management,,Open dashboard,"Status chart displays Open, In Progress, Closed, etc.",Not Automated,Not Run,,
+Test Case,Verify chart tooltip,"Page / Area: Charts
+Test Scenario: Verify chart tooltip",TC_UI_INC_DASH_008,Incident Management,,Hover over chart segment,"Tooltip displays label, count, and percentage",Not Automated,Not Run,,
+Test Case,Verify chart click filtering,"Page / Area: Charts
+Test Scenario: Verify chart click filtering",TC_UI_INC_DASH_009,Incident Management,,Click chart segment,Incident list refreshes using selected chart value,Not Automated,Not Run,,
+Test Case,Verify filters are visible,"Page / Area: Dashboard Filters
+Test Scenario: Verify filters are visible",TC_UI_INC_DASH_010,Incident Management,,View dashboard filter bar,"Site, department, date range, severity, status filters visible",Not Automated,Not Run,,
+Test Case,Verify reset filters button,"Page / Area: Dashboard Filters
+Test Scenario: Verify reset filters button",TC_UI_INC_DASH_011,Incident Management,,Apply filters then click Reset,Filters clear and dashboard returns to default view,Not Automated,Not Run,,
+Test Case,Verify refresh button,"Page / Area: Dashboard Refresh
+Test Scenario: Verify refresh button",TC_UI_INC_DASH_012,Incident Management,,Click Refresh,"Cards, charts, and grid refresh without full page failure",Not Automated,Not Run,,
+Test Case,Verify export option visibility,"Page / Area: Dashboard Export
+Test Scenario: Verify export option visibility",TC_UI_INC_DASH_013,Incident Management,,Open dashboard actions menu,Export options visible to authorized users,Not Automated,Not Run,,
+Test Case,Verify manager view,"Page / Area: Dashboard Role UI
+Test Scenario: Verify manager view",TC_UI_INC_DASH_014,Incident Management,,Login as Incident Manager,Manager-specific KPIs and queues visible,Not Automated,Not Run,,
+Test Case,Verify staff view,"Page / Area: Dashboard Role UI
+Test Scenario: Verify staff view",TC_UI_INC_DASH_015,Incident Management,,Login as Reporter/Staff,Only assigned/relevant incident widgets visible,Not Automated,Not Run,,
+Test Case,Verify reporting form opens,"Page / Area: Reporting Page
+Test Scenario: Verify reporting form opens",TC_UI_INC_REPORT_001,Incident Management,,Click “Report Incident”,Incident Reporting form opens successfully,Not Automated,Not Run,,
+Test Case,Verify form sections,"Page / Area: Form Layout
+Test Scenario: Verify form sections",TC_UI_INC_REPORT_002,Incident Management,,Open form,"Sections appear: Basic Info, Location, Classification, People Involved, Evidence, Review",Not Automated,Not Run,,
+Test Case,Verify required fields are marked,"Page / Area: Required Indicators
+Test Scenario: Verify required fields are marked",TC_UI_INC_REPORT_003,Incident Management,,Open form,Mandatory fields display required indicators,Not Automated,Not Run,,
+Test Case,Verify Incident Type LOV,"Page / Area: Incident Type
+Test Scenario: Verify Incident Type LOV",TC_UI_INC_REPORT_004,Incident Management,,Open type dropdown,Valid incident types appear,Not Automated,Not Run,,
+Test Case,Verify Severity LOV,"Page / Area: Severity
+Test Scenario: Verify Severity LOV",TC_UI_INC_REPORT_005,Incident Management,,Open severity dropdown,"Low, Medium, High, Critical values appear",Not Automated,Not Run,,
+Test Case,Verify Priority LOV,"Page / Area: Priority
+Test Scenario: Verify Priority LOV",TC_UI_INC_REPORT_006,Incident Management,,Open priority dropdown,Valid priority values appear,Not Automated,Not Run,,
+Test Case,Verify location selector,"Page / Area: Location Selector
+Test Scenario: Verify location selector",TC_UI_INC_REPORT_007,Incident Management,,Select site/location,Location value is selected and displayed correctly,Not Automated,Not Run,,
+Test Case,Verify incident date picker,"Page / Area: Date Picker
+Test Scenario: Verify incident date picker",TC_UI_INC_REPORT_008,Incident Management,,Open date picker,Calendar opens and allows valid date selection,Not Automated,Not Run,,
+Test Case,Verify incident time picker,"Page / Area: Time Picker
+Test Scenario: Verify incident time picker",TC_UI_INC_REPORT_009,Incident Management,,Open time field,Time can be entered/selected in correct format,Not Automated,Not Run,,
+Test Case,Verify multiline description field,"Page / Area: Description Field
+Test Scenario: Verify multiline description field",TC_UI_INC_REPORT_010,Incident Management,,Enter long description,Text wraps correctly and field remains usable,Not Automated,Not Run,,
+Test Case,Verify injury fields display conditionally,"Page / Area: Conditional Fields
+Test Scenario: Verify injury fields display conditionally",TC_UI_INC_REPORT_011,Incident Management,,Select “Injury Incident”,Injury-related fields appear,Not Automated,Not Run,,
+Test Case,Verify environmental fields display conditionally,"Page / Area: Conditional Fields
+Test Scenario: Verify environmental fields display conditionally",TC_UI_INC_REPORT_012,Incident Management,,Select “Environmental Incident”,Environmental fields appear,Not Automated,Not Run,,
+Test Case,Verify Save Draft button,"Page / Area: Save Draft Button
+Test Scenario: Verify Save Draft button",TC_UI_INC_REPORT_013,Incident Management,,Fill partial form and click Save Draft,Draft confirmation appears,Not Automated,Not Run,,
+Test Case,Verify Submit button position,"Page / Area: Submit Button
+Test Scenario: Verify Submit button position",TC_UI_INC_REPORT_014,Incident Management,,Scroll page,Submit button remains accessible at bottom or sticky action bar,Not Automated,Not Run,,
+Test Case,Verify cancel confirmation,"Page / Area: Cancel Button
+Test Scenario: Verify cancel confirmation",TC_UI_INC_REPORT_015,Incident Management,,Click Cancel after entering data,Confirmation popup appears before leaving,Not Automated,Not Run,,
+Test Case,Verify review before submit,"Page / Area: Review Screen
+Test Scenario: Verify review before submit",TC_UI_INC_REPORT_016,Incident Management,,Click Review/Next,Summary view displays all entered data,Not Automated,Not Run,,
+Test Case,Verify post-submit confirmation,"Page / Area: Success Message
+Test Scenario: Verify post-submit confirmation",TC_UI_INC_REPORT_017,Incident Management,,Submit valid incident,Success message with Incident ID appears,Not Automated,Not Run,,
+Test Case,Verify validation message placement,"Page / Area: Error Display
+Test Scenario: Verify validation message placement",TC_UI_INC_REPORT_018,Incident Management,,Submit blank form,Inline errors appear beside invalid fields,Not Automated,Not Run,,
+Test Case,Verify mobile-friendly reporting,"Page / Area: Mobile Entry
+Test Scenario: Verify mobile-friendly reporting",TC_UI_INC_REPORT_019,Incident Management,,Open form on mobile,Fields stack properly and are easy to complete,Not Automated,Not Run,,
+Test Case,Verify confidential option,"Page / Area: Reporter Privacy
+Test Scenario: Verify confidential option",TC_UI_INC_REPORT_020,Incident Management,,Select confidential reporting checkbox,Confidential banner/help text appears,Not Automated,Not Run,,
+Test Case,Verify incident details load,"Page / Area: Details Page
+Test Scenario: Verify incident details load",TC_UI_INC_DETAIL_001,Incident Management,,Open an incident from dashboard,Correct Incident ID and title displayed,Not Automated,Not Run,,
+Test Case,Verify header badges,"Page / Area: Header
+Test Scenario: Verify header badges",TC_UI_INC_DETAIL_002,Incident Management,,Open incident,"Severity, status, priority, SLA badge visible",Not Automated,Not Run,,
+Test Case,Verify action buttons,"Page / Area: Header Actions
+Test Scenario: Verify action buttons",TC_UI_INC_DETAIL_003,Incident Management,,Open incident as Manager,"Edit, Assign, Escalate, Close buttons visible",Not Automated,Not Run,,
+Test Case,Verify viewer mode,"Page / Area: Read-Only Mode
+Test Scenario: Verify viewer mode",TC_UI_INC_DETAIL_004,Incident Management,,Open incident as Viewer,Fields are read-only and edit actions hidden,Not Automated,Not Run,,
+Test Case,Verify tab navigation,"Page / Area: Tabs
+Test Scenario: Verify tab navigation",TC_UI_INC_DETAIL_005,Incident Management,,"Click Overview, Evidence, Comments, Audit, SLA tabs",Each tab displays correct content,Not Automated,Not Run,,
+Test Case,Verify basic info layout,"Page / Area: Overview Region
+Test Scenario: Verify basic info layout",TC_UI_INC_DETAIL_006,Incident Management,,Open Overview tab,Incident data is clearly grouped and readable,Not Automated,Not Run,,
+Test Case,Verify comments list,"Page / Area: Comments Region
+Test Scenario: Verify comments list",TC_UI_INC_DETAIL_007,Incident Management,,Open Comments tab,"Comments display user, timestamp, and content",Not Automated,Not Run,,
+Test Case,Verify add comment UI,"Page / Area: Add Comment
+Test Scenario: Verify add comment UI",TC_UI_INC_DETAIL_008,Incident Management,,Click Add Comment,Comment box/modal opens,Not Automated,Not Run,,
+Test Case,Verify edit/delete comment buttons,"Page / Area: Comment Actions
+Test Scenario: Verify edit/delete comment buttons",TC_UI_INC_DETAIL_009,Incident Management,,Login as comment owner,Edit/delete available only where permitted,Not Automated,Not Run,,
+Test Case,Verify evidence list,"Page / Area: Evidence Region
+Test Scenario: Verify evidence list",TC_UI_INC_DETAIL_010,Incident Management,,Open Evidence tab,"Uploaded files listed with type, uploader, date",Not Automated,Not Run,,
+Test Case,Verify audit log region,"Page / Area: Audit Trail
+Test Scenario: Verify audit log region",TC_UI_INC_DETAIL_011,Incident Management,,Open Audit tab,Audit entries displayed chronologically,Not Automated,Not Run,,
+Test Case,Verify SLA timer,"Page / Area: SLA Section
+Test Scenario: Verify SLA timer",TC_UI_INC_DETAIL_012,Incident Management,,Open SLA tab,SLA timer/status displayed correctly,Not Automated,Not Run,,
+Test Case,Verify escalation history,"Page / Area: Escalation Section
+Test Scenario: Verify escalation history",TC_UI_INC_DETAIL_013,Incident Management,,Open Escalation area,Escalation history displays levels and timestamps,Not Automated,Not Run,,
+Test Case,Verify linked CAPA/RCA/NCR records,"Page / Area: Related Records
+Test Scenario: Verify linked CAPA/RCA/NCR records",TC_UI_INC_DETAIL_014,Incident Management,,Open linked records section,Related objects displayed as clickable links,Not Automated,Not Run,,
+Test Case,Verify unsaved changes warning,"Page / Area: Unsaved Changes
+Test Scenario: Verify unsaved changes warning",TC_UI_INC_DETAIL_015,Incident Management,,Edit a field and navigate away,Warning popup appears,Not Automated,Not Run,,
+Test Case,Verify status transition UI,"Page / Area: Status Update UI
+Test Scenario: Verify status transition UI",TC_UI_INC_DETAIL_016,Incident Management,,Change status,Status dropdown shows allowed next states only,Not Automated,Not Run,,
+Test Case,Verify assign owner control,"Page / Area: Assignment UI
+Test Scenario: Verify assign owner control",TC_UI_INC_DETAIL_017,Incident Management,,Click Assign,Assignment modal or LOV opens,Not Automated,Not Run,,
+Test Case,Verify closure action,"Page / Area: Close Incident UI
+Test Scenario: Verify closure action",TC_UI_INC_DETAIL_018,Incident Management,,Click Close,Incident Closure modal opens with required fields,Not Automated,Not Run,,
+Test Case,Verify print-friendly view,"Page / Area: Print View
+Test Scenario: Verify print-friendly view",TC_UI_INC_DETAIL_019,Incident Management,,Click Print/Export,Printable layout opens without broken formatting,Not Automated,Not Run,,
+Test Case,Verify long description rendering,"Page / Area: Long Text Display
+Test Scenario: Verify long description rendering",TC_UI_INC_DETAIL_020,Incident Management,,Open incident with long description,Long text wraps and does not break layout,Not Automated,Not Run,,
+Test Case,Verify page entry,"Page / Area: SLA Monitoring
+Test Scenario: Verify page entry",TC_UI_INC_SLA_001,Incident Management,,Open SLA Monitoring page,Entry screen loads with title and filters,Not Automated,Not Run,,
+Test Case,Verify SLA KPI cards,"Page / Area: Summary Cards
+Test Scenario: Verify SLA KPI cards",TC_UI_INC_SLA_002,Incident Management,,Open page,"Total SLAs, On Track, Nearing Breach, Breached cards visible",Not Automated,Not Run,,
+Test Case,Verify SLA monitoring table,"Page / Area: SLA Table
+Test Scenario: Verify SLA monitoring table",TC_UI_INC_SLA_003,Incident Management,,Open table,"Incident ID, deadline, time remaining, status, actions visible",Not Automated,Not Run,,
+Test Case,Verify countdown format,"Page / Area: Countdown
+Test Scenario: Verify countdown format",TC_UI_INC_SLA_004,Incident Management,,View Time Remaining column,Timer displays in correct format,Not Automated,Not Run,,
+Test Case,Verify On Track row styling,"Page / Area: Row Highlight
+Test Scenario: Verify On Track row styling",TC_UI_INC_SLA_005,Incident Management,,View On Track record,Row/badge displays green or configured success style,Not Automated,Not Run,,
+Test Case,Verify Nearing Breach row styling,"Page / Area: Row Highlight
+Test Scenario: Verify Nearing Breach row styling",TC_UI_INC_SLA_006,Incident Management,,View Nearing Breach record,Row/badge displays warning style,Not Automated,Not Run,,
+Test Case,Verify Breached row styling,"Page / Area: Row Highlight
+Test Scenario: Verify Breached row styling",TC_UI_INC_SLA_007,Incident Management,,View Breached record,Row/badge displays danger style,Not Automated,Not Run,,
+Test Case,Verify SLA status filter,"Page / Area: SLA Filter
+Test Scenario: Verify SLA status filter",TC_UI_INC_SLA_008,Incident Management,,Filter by Breached,Only breached SLA records shown,Not Automated,Not Run,,
+Test Case,Verify modal opens,"Page / Area: SLA Adjustment Modal
+Test Scenario: Verify modal opens",TC_UI_INC_SLA_009,Incident Management,,Click Adjust SLA,Modal opens with incident and current deadline,Not Automated,Not Run,,
+Test Case,Verify reason field,"Page / Area: SLA Adjustment Modal
+Test Scenario: Verify reason field",TC_UI_INC_SLA_010,Incident Management,,Open modal,Reason field is visible and required,Not Automated,Not Run,,
+Test Case,Verify alerts display,"Page / Area: SLA Alert Panel
+Test Scenario: Verify alerts display",TC_UI_INC_SLA_011,Incident Management,,Open alert panel,Breach and near-breach alerts appear,Not Automated,Not Run,,
+Test Case,Verify acknowledge action,"Page / Area: Alert Acknowledge
+Test Scenario: Verify acknowledge action",TC_UI_INC_SLA_012,Incident Management,,Click Acknowledge,Alert status changes visually,Not Automated,Not Run,,
+Test Case,Verify SLA heatmap renders,"Page / Area: Heatmap
+Test Scenario: Verify SLA heatmap renders",TC_UI_INC_SLA_013,Incident Management,,Open heatmap section,Heatmap displays categories vs SLA status,Not Automated,Not Run,,
+Test Case,Verify heatmap click filtering,"Page / Area: Heatmap Interaction
+Test Scenario: Verify heatmap click filtering",TC_UI_INC_SLA_014,Incident Management,,Click breached/category cell,SLA table filters accordingly,Not Automated,Not Run,,
+Test Case,Verify SLA audit log display,"Page / Area: Audit Logs
+Test Scenario: Verify SLA audit log display",TC_UI_INC_SLA_015,Incident Management,,Open SLA audit tab,SLA actions appear with user and timestamp,Not Automated,Not Run,,
+Test Case,Verify search page opens,"Page / Area: Search Page
+Test Scenario: Verify search page opens",TC_UI_INC_SEARCH_001,Incident Management,,Open Incident Search,Search/filter UI loads,Not Automated,Not Run,,
+Test Case,Verify keyword search field,"Page / Area: Keyword Search
+Test Scenario: Verify keyword search field",TC_UI_INC_SEARCH_002,Incident Management,,Enter incident title keyword,Matching incidents display,Not Automated,Not Run,,
+Test Case,Verify advanced filter panel,"Page / Area: Advanced Filters
+Test Scenario: Verify advanced filter panel",TC_UI_INC_SEARCH_003,Incident Management,,Click Advanced Filters,Panel expands with additional filters,Not Automated,Not Run,,
+Test Case,Verify multi-select severity/status,"Page / Area: Multi-Select Filters
+Test Scenario: Verify multi-select severity/status",TC_UI_INC_SEARCH_004,Incident Management,,Select multiple values,Selected chips/tags display correctly,Not Automated,Not Run,,
+Test Case,Verify date range UI,"Page / Area: Date Range Filter
+Test Scenario: Verify date range UI",TC_UI_INC_SEARCH_005,Incident Management,,Select From and To dates,Date range values display correctly,Not Automated,Not Run,,
+Test Case,Verify saved view dropdown,"Page / Area: Saved Views
+Test Scenario: Verify saved view dropdown",TC_UI_INC_SEARCH_006,Incident Management,,Open Saved Views,User’s saved filter views appear,Not Automated,Not Run,,
+Test Case,Verify column chooser,"Page / Area: Column Chooser
+Test Scenario: Verify column chooser",TC_UI_INC_SEARCH_007,Incident Management,,Open column chooser,Column list appears with checkboxes,Not Automated,Not Run,,
+Test Case,Verify bulk action menu,"Page / Area: Bulk Actions
+Test Scenario: Verify bulk action menu",TC_UI_INC_SEARCH_008,Incident Management,,Select multiple records,Bulk action menu becomes enabled,Not Automated,Not Run,,
+Test Case,Verify export button,"Page / Area: Export
+Test Scenario: Verify export button",TC_UI_INC_SEARCH_009,Incident Management,,Click Export,Export option is available to authorized users,Not Automated,Not Run,,
+Test Case,Verify clear/reset,"Page / Area: Clear Search
+Test Scenario: Verify clear/reset",TC_UI_INC_SEARCH_010,Incident Management,,Apply filters then clear,All filters removed and default results return,Not Automated,Not Run,,
+Test Case,Verify viewer opens,"Page / Area: Evidence Viewer
+Test Scenario: Verify viewer opens",TC_UI_INC_EVID_001,Incident Management,,Click View on evidence file,Evidence viewer modal/page opens,Not Automated,Not Run,,
+Test Case,Verify PDF preview,"Page / Area: PDF Preview
+Test Scenario: Verify PDF preview",TC_UI_INC_EVID_002,Incident Management,,Open PDF evidence,PDF preview renders correctly,Not Automated,Not Run,,
+Test Case,Verify image preview,"Page / Area: Image Preview
+Test Scenario: Verify image preview",TC_UI_INC_EVID_003,Incident Management,,Open image evidence,Image displays without distortion,Not Automated,Not Run,,
+Test Case,Verify unsupported file handling,"Page / Area: Unsupported File
+Test Scenario: Verify unsupported file handling",TC_UI_INC_EVID_004,Incident Management,,Open unsupported file,Download prompt or friendly message appears,Not Automated,Not Run,,
+Test Case,Verify metadata display,"Page / Area: Metadata Panel
+Test Scenario: Verify metadata display",TC_UI_INC_EVID_005,Incident Management,,Open evidence file,"Filename, uploader, date, version visible",Not Automated,Not Run,,
+Test Case,Verify download button,"Page / Area: Download Button
+Test Scenario: Verify download button",TC_UI_INC_EVID_006,Incident Management,,Click Download,File download begins or secure link opens,Not Automated,Not Run,,
+Test Case,Verify delete button role visibility,"Page / Area: Delete Button
+Test Scenario: Verify delete button role visibility",TC_UI_INC_EVID_007,Incident Management,,Login as Viewer,Delete button hidden,Not Automated,Not Run,,
+Test Case,Verify evidence version list,"Page / Area: Version History
+Test Scenario: Verify evidence version list",TC_UI_INC_EVID_008,Incident Management,,Open version history,Previous versions listed correctly,Not Automated,Not Run,,
+Test Case,Verify next/previous evidence buttons,"Page / Area: Navigation
+Test Scenario: Verify next/previous evidence buttons",TC_UI_INC_EVID_009,Incident Management,,Click Next/Previous,Viewer navigates between files,Not Automated,Not Run,,
+Test Case,Verify close behavior,"Page / Area: Close Viewer
+Test Scenario: Verify close behavior",TC_UI_INC_EVID_010,Incident Management,,Click Close,Returns to Incident Details page/region,Not Automated,Not Run,,
+Test Case,Verify modal opens,"Page / Area: Edit Incident Modal
+Test Scenario: Verify modal opens",TC_UI_INC_MODAL_001,Incident Management,,Click Edit Incident,Edit modal opens centered,Not Automated,Not Run,,
+Test Case,Verify escalation modal,"Page / Area: Escalation Modal
+Test Scenario: Verify escalation modal",TC_UI_INC_MODAL_002,Incident Management,,Click Escalate,Escalation modal opens with reason and level fields,Not Automated,Not Run,,
+Test Case,Verify extension modal,"Page / Area: SLA Extension Modal
+Test Scenario: Verify extension modal",TC_UI_INC_MODAL_003,Incident Management,,Click Request SLA Extension,SLA Extension modal opens,Not Automated,Not Run,,
+Test Case,Verify upload modal,"Page / Area: Evidence Upload Modal
+Test Scenario: Verify upload modal",TC_UI_INC_MODAL_004,Incident Management,,Click Upload Evidence,Upload modal opens with file picker,Not Automated,Not Run,,
+Test Case,Verify critical action confirmation,"Page / Area: Confirmation Popup
+Test Scenario: Verify critical action confirmation",TC_UI_INC_MODAL_005,Incident Management,,Click Delete/Archive/Close,Confirmation popup appears,Not Automated,Not Run,,
+Test Case,Verify error popup,"Page / Area: Error Popup
+Test Scenario: Verify error popup",TC_UI_INC_MODAL_006,Incident Management,,Trigger invalid action,Error popup displays clear message,Not Automated,Not Run,,
+Test Case,Verify success message,"Page / Area: Success Popup
+Test Scenario: Verify success message",TC_UI_INC_MODAL_007,Incident Management,,Complete valid action,Success message appears,Not Automated,Not Run,,
+Test Case,Verify close icon,"Page / Area: Modal Close
+Test Scenario: Verify close icon",TC_UI_INC_MODAL_008,Incident Management,,Click X icon,Modal closes without data loss unless confirmed,Not Automated,Not Run,,
+Test Case,Verify Esc key behavior,"Page / Area: Modal Keyboard
+Test Scenario: Verify Esc key behavior",TC_UI_INC_MODAL_009,Incident Management,,Press Esc in modal,Modal closes or prompts depending on unsaved data,Not Automated,Not Run,,
+Test Case,Verify keyboard focus remains inside modal,"Page / Area: Modal Focus Trap
+Test Scenario: Verify keyboard focus remains inside modal",TC_UI_INC_MODAL_010,Incident Management,,Tab through modal,Focus cycles within modal until closed,Not Automated,Not Run,,
+Test Case,Verify analytics page loads,"Page / Area: Analytics
+Test Scenario: Verify analytics page loads",TC_UI_INC_ANALYTICS_001,Incident Management,,Open Incident Analytics,Charts and filters load successfully,Not Automated,Not Run,,
+Test Case,Verify trend chart,"Page / Area: Trend Chart
+Test Scenario: Verify trend chart",TC_UI_INC_ANALYTICS_002,Incident Management,,View incident trend,Chart displays date-wise trend,Not Automated,Not Run,,
+Test Case,Verify severity chart,"Page / Area: Severity Chart
+Test Scenario: Verify severity chart",TC_UI_INC_ANALYTICS_003,Incident Management,,View severity distribution,Correct labels and legend displayed,Not Automated,Not Run,,
+Test Case,Verify category chart,"Page / Area: Category Chart
+Test Scenario: Verify category chart",TC_UI_INC_ANALYTICS_004,Incident Management,,View category distribution,Incident categories shown correctly,Not Automated,Not Run,,
+Test Case,Verify SLA compliance chart,"Page / Area: SLA Chart
+Test Scenario: Verify SLA compliance chart",TC_UI_INC_ANALYTICS_005,Incident Management,,Open SLA analytics,SLA compliance percentage shown,Not Automated,Not Run,,
+Test Case,Verify tooltip,"Page / Area: Chart Tooltip
+Test Scenario: Verify tooltip",TC_UI_INC_ANALYTICS_006,Incident Management,,Hover over chart point,Tooltip shows meaningful values,Not Automated,Not Run,,
+Test Case,Verify drilldown,"Page / Area: Chart Drilldown
+Test Scenario: Verify drilldown",TC_UI_INC_ANALYTICS_007,Incident Management,,Click chart segment,Relevant incident list opens/filters,Not Automated,Not Run,,
+Test Case,Verify no-data chart state,"Page / Area: No Data Chart
+Test Scenario: Verify no-data chart state",TC_UI_INC_ANALYTICS_008,Incident Management,,Apply no-result filter,Chart displays no-data state gracefully,Not Automated,Not Run,,
+Test Case,Verify export chart option,"Page / Area: Chart Export
+Test Scenario: Verify export chart option",TC_UI_INC_ANALYTICS_009,Incident Management,,Click chart actions menu,Export/download option available,Not Automated,Not Run,,
+Test Case,Verify comparative indicators,"Page / Area: Benchmark View
+Test Scenario: Verify comparative indicators",TC_UI_INC_ANALYTICS_010,Incident Management,,Open analytics with prior-period data,Trend indicators display correctly,Not Automated,Not Run,,
+Test Case,Verify Admin UI access,"Page / Area: Admin Role
+Test Scenario: Verify Admin UI access",TC_UI_INC_AUTH_001,Incident Management,,Login as Admin,All admin actions visible,Not Automated,Not Run,,
+Test Case,Verify Manager UI access,"Page / Area: Manager Role
+Test Scenario: Verify Manager UI access",TC_UI_INC_AUTH_002,Incident Management,,Login as Manager,"Edit, assign, escalate actions visible as configured",Not Automated,Not Run,,
+Test Case,Verify Investigator UI access,"Page / Area: Investigator Role
+Test Scenario: Verify Investigator UI access",TC_UI_INC_AUTH_003,Incident Management,,Login as Investigator,Investigation-related actions visible,Not Automated,Not Run,,
+Test Case,Verify Reporter UI access,"Page / Area: Reporter Role
+Test Scenario: Verify Reporter UI access",TC_UI_INC_AUTH_004,Incident Management,,Login as Reporter,Report incident and view own incidents visible,Not Automated,Not Run,,
+Test Case,Verify Viewer UI access,"Page / Area: Viewer Role
+Test Scenario: Verify Viewer UI access",TC_UI_INC_AUTH_005,Incident Management,,Login as Viewer,Read-only UI visible; edit actions hidden,Not Automated,Not Run,,
+Test Case,Verify confidential incident masking,"Page / Area: Confidential Incidents
+Test Scenario: Verify confidential incident masking",TC_UI_INC_AUTH_006,Incident Management,,Login as unauthorized user,Confidential details hidden or masked,Not Automated,Not Run,,
+Test Case,Verify direct URL cannot expose hidden modal/page,"Page / Area: Component Security
+Test Scenario: Verify direct URL cannot expose hidden modal/page",TC_UI_INC_AUTH_007,Incident Management,,Paste direct modal URL,Access denied or redirected,Not Automated,Not Run,,
+Test Case,Verify config page hidden from non-admins,"Page / Area: Admin Config
+Test Scenario: Verify config page hidden from non-admins",TC_UI_INC_AUTH_008,Incident Management,,Login as Manager/Staff,Admin/SLA config hidden,Not Automated,Not Run,,
+Test Case,Verify delete hidden for unauthorized roles,"Page / Area: Evidence Delete
+Test Scenario: Verify delete hidden for unauthorized roles",TC_UI_INC_AUTH_009,Incident Management,,Login as Viewer,Delete evidence action hidden,Not Automated,Not Run,,
+Test Case,Verify audit trail restricted if needed,"Page / Area: Audit Trail Visibility
+Test Scenario: Verify audit trail restricted if needed",TC_UI_INC_AUTH_010,Incident Management,,Login as basic user,Audit trail hidden or limited,Not Automated,Not Run,,
+Test Case,Verify keyboard-only navigation,"Page / Area: Keyboard Navigation
+Test Scenario: Verify keyboard-only navigation",TC_UI_INC_A11Y_001,Incident Management,,Use Tab/Shift+Tab across page,All actionable elements reachable,Not Automated,Not Run,,
+Test Case,Verify visible focus state,"Page / Area: Focus Indicator
+Test Scenario: Verify visible focus state",TC_UI_INC_A11Y_002,Incident Management,,Tab through buttons/fields,Clear focus indicator appears,Not Automated,Not Run,,
+Test Case,Verify form labels,"Page / Area: Screen Reader Labels
+Test Scenario: Verify form labels",TC_UI_INC_A11Y_003,Incident Management,,Run screen reader or inspect labels,Each input has accessible label,Not Automated,Not Run,,
+Test Case,Verify errors announced,"Page / Area: Error Accessibility
+Test Scenario: Verify errors announced",TC_UI_INC_A11Y_004,Incident Management,,Trigger validation error,Error is associated with field,Not Automated,Not Run,,
+Test Case,Verify contrast,"Page / Area: Color Contrast
+Test Scenario: Verify contrast",TC_UI_INC_A11Y_005,Incident Management,,"Check badges, text, charts",Text meets contrast expectations,Not Automated,Not Run,,
+Test Case,Verify status not color-only,"Page / Area: Non-Color Indicators
+Test Scenario: Verify status not color-only",TC_UI_INC_A11Y_006,Incident Management,,Review SLA/severity badges,Text/icon included with color,Not Automated,Not Run,,
+Test Case,Verify modal focus trap,"Page / Area: Modal Accessibility
+Test Scenario: Verify modal focus trap",TC_UI_INC_A11Y_007,Incident Management,,Open modal and tab,Focus remains inside modal,Not Automated,Not Run,,
+Test Case,Verify chart alternatives,"Page / Area: Chart Accessibility
+Test Scenario: Verify chart alternatives",TC_UI_INC_A11Y_008,Incident Management,,Inspect charts,"Chart has labels, legend, or data table alternative",Not Automated,Not Run,,
+Test Case,Verify touch target size,"Page / Area: Mobile Accessibility
+Test Scenario: Verify touch target size",TC_UI_INC_A11Y_009,Incident Management,,Open on mobile,Buttons/inputs have usable touch targets,Not Automated,Not Run,,
+Test Case,Verify semantic landmarks,"Page / Area: Page Landmarks
+Test Scenario: Verify semantic landmarks",TC_UI_INC_A11Y_010,Incident Management,,Inspect DOM or use screen reader,"Header, main content, navigation landmarks available",Not Automated,Not Run,,
+Test Case,Verify long title display,"Page / Area: Long Incident Title
+Test Scenario: Verify long title display",TC_UI_INC_ADV_001,Incident Management,,Open incident with very long title,Title truncates/wraps gracefully,Not Automated,Not Run,,
+Test Case,Verify long comment handling,"Page / Area: Long Comments
+Test Scenario: Verify long comment handling",TC_UI_INC_ADV_002,Incident Management,,Add/view long comment,Comment wraps and does not break layout,Not Automated,Not Run,,
+Test Case,Verify comments pagination,"Page / Area: Many Comments
+Test Scenario: Verify comments pagination",TC_UI_INC_ADV_003,Incident Management,,Open incident with 500+ comments,Pagination/lazy loading works,Not Automated,Not Run,,
+Test Case,Verify evidence list scalability,"Page / Area: Many Attachments
+Test Scenario: Verify evidence list scalability",TC_UI_INC_ADV_004,Incident Management,,Open incident with 100+ files,Evidence list remains usable,Not Automated,Not Run,,
+Test Case,Verify historical date display,"Page / Area: Very Old Incidents
+Test Scenario: Verify historical date display",TC_UI_INC_ADV_005,Incident Management,,Open old incident,Dates display correctly,Not Automated,Not Run,,
+Test Case,Verify blank optional fields,"Page / Area: Missing Optional Data
+Test Scenario: Verify blank optional fields",TC_UI_INC_ADV_006,Incident Management,,Open incident missing optional fields,"Shows dash/empty state, not broken labels",Not Automated,Not Run,,
+Test Case,Verify network error UI,"Page / Area: Offline/Network Error
+Test Scenario: Verify network error UI",TC_UI_INC_ADV_007,Incident Management,,Simulate failed refresh,Friendly error message appears,Not Automated,Not Run,,
+Test Case,Verify timeout popup,"Page / Area: Session Timeout
+Test Scenario: Verify timeout popup",TC_UI_INC_ADV_008,Incident Management,,Keep page idle,Timeout warning appears,Not Automated,Not Run,,
+Test Case,Verify concurrent update UI,"Page / Area: Concurrent Edit Warning
+Test Scenario: Verify concurrent update UI",TC_UI_INC_ADV_009,Incident Management,,Edit same incident in two sessions,Conflict or refresh warning appears,Not Automated,Not Run,,
+Test Case,Verify dark mode compatibility,"Page / Area: Dark Mode
+Test Scenario: Verify dark mode compatibility",TC_UI_INC_ADV_010,Incident Management,,Enable dark mode,Layout remains readable,Not Automated,Not Run,,
+Test Case,Verify status indicators,"Page / Area: Color-Blind Safe UI
+Test Scenario: Verify status indicators",TC_UI_INC_ADV_011,Incident Management,,Review severity/SLA indicators,UI is understandable without relying only on color,Not Automated,Not Run,,
+Test Case,Verify AI panel visibility,"Page / Area: AI Suggestion Panel
+Test Scenario: Verify AI panel visibility",TC_UI_INC_ADV_012,Incident Management,,Open incident with AI enabled,AI recommendations panel appears as per role/config,Not Automated,Not Run,,
+Test Case,Verify disabled AI feature,"Page / Area: AI Disabled State
+Test Scenario: Verify disabled AI feature",TC_UI_INC_ADV_013,Incident Management,,Disable AI feature flag,AI panel hidden or shows disabled message,Not Automated,Not Run,,
+Test Case,Verify bulk action availability,"Page / Area: Bulk Actions UI
+Test Scenario: Verify bulk action availability",TC_UI_INC_ADV_014,Incident Management,,Select multiple incidents,Bulk menu enabled and shows valid actions,Not Automated,Not Run,,
+Test Case,Verify saved view persistence,"Page / Area: Saved Views UI
+Test Scenario: Verify saved view persistence",TC_UI_INC_ADV_015,Incident Management,,Save custom incident view and reload,Saved view remains available,Not Automated,Not Run,,

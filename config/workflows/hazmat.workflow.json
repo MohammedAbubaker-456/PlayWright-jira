@@ -1,0 +1,85 @@
+{
+  "name": "Hazmat Chemical Master Approval Workflow",
+  "module": "hazmat",
+  "version": "1.0.0",
+  "start": "CREATE_CHEMICAL",
+  "maxAttempts": 10,
+  "maxStateVisits": {
+    "EDIT_CHEMICAL": 3,
+    "CREATE_CHEMICAL": 2
+  },
+  "states": {
+    "CREATE_CHEMICAL": {
+      "type": "form",
+      "page": "chemicalCreate",
+      "formKey": "chemicalData",
+      "next": "SUBMIT_FOR_APPROVAL",
+      "testBoundaries": false,
+      "enableToggles": true
+    },
+    "SUBMIT_FOR_APPROVAL": {
+      "type": "submit",
+      "page": "chemicalCreate",
+      "button": "submitForApprovalButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "APPROVAL_REVIEW",
+      "assertions": [
+        {
+          "type": "noApexError"
+        }
+      ]
+    },
+    "APPROVAL_REVIEW": {
+      "type": "review",
+      "page": "chemicalApproval",
+      "actions": [
+        "approve",
+        "reject",
+        "sendBack"
+      ],
+      "buttons": {
+        "approve": "approveButton",
+        "reject": "rejectButton",
+        "sendBack": "sendBackButton"
+      },
+      "commentInput": "reviewCommentInput",
+      "comments": {
+        "approve": "Approved: Complies with hazardous material storage limits and classifications.",
+        "reject": "Rejected: Missing mandatory SDS and incompatible flash point for site storage.",
+        "sendBack": "Returned for Update: Please provide secondary containment specifications."
+      },
+      "transitions": {
+        "approve": "APPROVED_COMPLETE",
+        "reject": "REJECTED_TERMINAL",
+        "sendBack": "EDIT_CHEMICAL"
+      }
+    },
+    "EDIT_CHEMICAL": {
+      "type": "form",
+      "page": "chemicalEdit",
+      "formKey": "chemicalUpdateData",
+      "next": "RESUBMIT_CHEMICAL"
+    },
+    "RESUBMIT_CHEMICAL": {
+      "type": "submit",
+      "page": "chemicalEdit",
+      "button": "resubmitButton",
+      "modalConfirm": true,
+      "checkErrors": true,
+      "next": "APPROVAL_REVIEW",
+      "assertions": [
+        {
+          "type": "noApexError"
+        }
+      ]
+    },
+    "APPROVED_COMPLETE": {
+      "type": "complete",
+      "page": "restrictedChemicalsList"
+    },
+    "REJECTED_TERMINAL": {
+      "type": "rejected"
+    }
+  }
+}

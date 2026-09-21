@@ -1,0 +1,26 @@
+{
+  "nearMissData": {
+    "Observation Title": "Unsecured High Pressure Steam Hose Near Walkway",
+    "Description of Unsafe Condition": "Steam hose coupling safety pin was missing on line B-4 during line purge. Disconnect could have resulted in high temperature steam exposure to operators.",
+    "Exact Location": "Boiler House Mezzanine Level 2",
+    "Preliminary Severity Assessment": "Moderate",
+    "Immediate Action Taken": "Line depressurized immediately and whip-check safety cable installed.",
+    "Observer Name": "Sarah Jenkins",
+    "Department": "Operations / Utilities"
+  },
+  "rcaData": {
+    "Root Cause Analysis": "Vibration loosened standard linchpin; safety whip-check cable was not affixed prior to pressurization.",
+    "Contributing Factors": "Lack of visual pre-start verification indicator on steam purge manifolds.",
+    "RCA Methodology": "5-Why Analysis & Fishbone Diagram"
+  },
+  "capaData": {
+    "CAPA Title": "Standardize Positive-Lock Safety Pins & Permanent Whip-Checks on Steam Headers",
+    "Corrective Action": "Replace all slip pins with captive locking pins on utility purge stations across all plants.",
+    "Target Due Date": "2026-11-15",
+    "Responsible Owner": "utilities.lead@soapbox.in"
+  },
+  "closureData": {
+    "Closure Review Notes": "Positive-locking pins installed on all 18 steam purge points. Standard operating procedure updated and training verified.",
+    "Effectiveness Verification": "No further loose connections detected in weekly audit."
+  }
+}
