@@ -18,13 +18,12 @@ test.describe("formValidation incident Module  ", function () {
         const loginPage = new LoginPage(page);
         test.setTimeout(50000);
 
-        await loginPage.loginToApplication("alice@abc.com", "Oracle@12345");
+        await loginPage.loginToApplication("camila.rocha@cornerstoneinfra.com", "oracle");
 
         await page.waitForLoadState("networkidle");
 
         // report new incident button
-        await page.locator("(//button[@id='B4742357481340896475'])[1]").click();
-
+        await page.locator("//button[normalize-space(.)='Report New Incident']").click();
         await page.waitForLoadState("networkidle");
 
         // Map this test case's JSON keys to the ACTUAL on-page label text.
@@ -41,7 +40,7 @@ test.describe("formValidation incident Module  ", function () {
         // module's page without per-module configuration.
         const filler = new ApexFormFiller(page, {
           fieldData,
-          filePath: "C:/Users/MOHAMMED ABUBAKER/Desktop/img1.jpg",
+          filePath: "C:/Users/MOHAMMED ABUBAKER/Desktop/test-evidence.jpg",
         });
 
         const issues = await filler.fillAll();
