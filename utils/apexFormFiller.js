@@ -81,9 +81,17 @@ class ApexFormFiller {
     this.fieldData = {};
     if (options.fieldData) this.setFieldData(options.fieldData);
 
+
+    // this.staticData = {
+    //   filePath:
+    //     options.filePath || "C:\\Users\\MOHAMMED ABUBAKER\\Desktop\\test-evidence.jpg",
+    // };
+
     this.staticData = {
       filePath:
-options.filePath || process.env.EVIDENCE_FILE_PATH,    };
+        options.filePath || process.env.EVIDENCE_FILE_PATH,
+    };
+
 
     this.testBoundaries =
       options.testBoundaries === undefined ? true : options.testBoundaries;
