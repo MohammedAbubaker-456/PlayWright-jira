@@ -48,9 +48,15 @@
       "page": "incidentReporting",
       "button": "incidentCreateButton",
       "modalConfirm": true,
-      "catchErrors": true,
       "checkErrors": true,
-      "next": "SELECT_OPEN_INCIDENT"
+      "next": "SELECT_OPEN_INCIDENT",
+      "assertions": [
+        {
+          "type": "notVisible",
+          "locator": "apexErrorAlert",
+          "timeout": 3000
+        }
+      ]
     },
     "SELECT_OPEN_INCIDENT": {
       "type": "tableAction",
@@ -83,7 +89,6 @@
       "type": "action",
       "target": "startInvestigationButton",
       "modalConfirm": true,
-      "catchErrors": true,
       "checkErrors": true,
       "next": "NAV_INVESTIGATION_TAB"
     },

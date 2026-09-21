@@ -54,6 +54,11 @@ function registerIncidentPages(registry = defaultRegistry) {
       "//div[contains(@class,'ui-dialog')]//button[normalize-space()='OK'] | " +
       "//button[contains(.,'OK')]",
     incidentSaveDraftButton: "//span[normalize-space()='Save as Draft'] | //button[contains(.,'Draft')]",
+    apexErrorAlert:
+      "//div[contains(@class,'t-Alert') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//div[contains(@class,'a-Notification') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//*[@id='t_Alert_Notification'] | " +
+      "//*[contains(text(),'error has occurred') or contains(text(),'error occurred')]",
 
     // 2. Dashboard Open Incident Selection
     dashboardOpenIncidentEye:

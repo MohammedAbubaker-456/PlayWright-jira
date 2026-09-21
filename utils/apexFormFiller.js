@@ -34,6 +34,8 @@
 const DUMMY_LOREM_TEXT =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
+const { expect } = require("@playwright/test");
+
 class ApexFormFiller {
   /**
    * Auto-detect the form scope by walking up from a known field on the page
@@ -438,7 +440,11 @@ class ApexFormFiller {
     // theme itself, so it's identical across every module - no per-module
     // selector needed.
     const selector =
-      ".a-Notification--error, .t-Alert--danger, .t-Alert--error, .apex-page-error, #APEX_ERROR_MESSAGE, .htmldbStdErr, .a-Notification-item";
+      "//div[contains(@class,'t-Alert') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//div[contains(@class,'a-Notification') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//*[@id='t_Alert_Notification'] | " +
+      "//*[contains(text(),'error has occurred') or contains(text(),'error occurred')] | " +
+      ".a-Notification--error, .t-Alert--danger, .t-Alert--error, .t-Alert--warning, .apex-page-error, #APEX_ERROR_MESSAGE, .htmldbStdErr, .a-Notification-item";
 
     const deadline = Date.now() + timeoutMs;
 
@@ -472,7 +478,7 @@ class ApexFormFiller {
                 alertParent.id === "t_Alert_Success"
               );
             }).catch(() => false)) ||
-            (text.toLowerCase().includes("success") && !text.toLowerCase().includes("error has occurred"));
+            (text.toLowerCase().includes("success") && !text.toLowerCase().includes("error"));
 
           if (isSuccess) {
             continue;
@@ -493,12 +499,15 @@ class ApexFormFiller {
             ? ` -> ${detailItems.join("; ")}`
             : "";
 
+          console.error(`[APEX ERROR ALERT] Detected error alert: "${text}"${detail}`);
+          await expect(loc, `ApexFormFiller: form submission failed - error alert visible: "${text}"${detail}`).not.toBeVisible({ timeout: 1000 });
+
           throw new Error(
             `ApexFormFiller: form submission failed - alert detected: "${text}"${detail}`,
           );
         } catch (err) {
-          if (err.message && err.message.startsWith("ApexFormFiller:")) {
-            throw err; // real failure - propagate up and fail the test
+          if (err.matcherResult || (err.message && (err.message.includes("ApexFormFiller:") || err.message.includes("expect(")))) {
+            throw err; // real failure - propagate up and fail the test immediately
           }
           // otherwise a frame navigated away / got detached mid-check - ignore and keep polling
         }

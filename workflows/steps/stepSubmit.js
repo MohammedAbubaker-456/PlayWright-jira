@@ -6,6 +6,7 @@
  * confirmation (e.g. "OK"), and verifies there are no APEX error alerts.
  */
 
+const { expect } = require("@playwright/test");
 const { ApexFormFiller } = require("../../utils/apexFormFiller");
 
 async function executeStepSubmit(page, state, context) {
@@ -65,9 +66,32 @@ async function executeStepSubmit(page, state, context) {
 
   // Verify APEX error alerts unless explicitly skipped
   if (state.checkErrors !== false) {
+    // 1. Immediate Playwright assertion on error notification / toast
+    const errorAlert = page.locator(
+      "//div[contains(@class,'t-Alert') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//div[contains(@class,'a-Notification') and (contains(.,'error') or contains(.,'ORA-'))] | " +
+      "//*[@id='t_Alert_Notification'] | " +
+      "//*[contains(text(),'error has occurred') or contains(text(),'error occurred')]"
+    ).first();
+
+    const isError = await errorAlert.isVisible({ timeout: 4000 }).catch(() => false);
+    if (isError) {
+      const errorText = (await errorAlert.innerText().catch(() => "")).trim();
+      const isSuccess = errorText.toLowerCase().includes("success") && !errorText.toLowerCase().includes("error");
+      if (!isSuccess) {
+        console.error(`\n[WORKFLOW] [SUBMIT] APEX error alert detected: "${errorText}"`);
+        if (!state.catchErrors) {
+          await expect(errorAlert, `Oracle APEX Error alert detected: "${errorText}"`).not.toBeVisible({ timeout: 1000 });
+        } else {
+          console.warn(`[WORKFLOW] [SUBMIT] Caught APEX alert as configured: ${errorText}`);
+        }
+      }
+    }
+
+    // 2. Also run comprehensive multi-frame check
     const filler = new ApexFormFiller(page);
     try {
-      await filler.assertNoErrorAlert(state.matchErrorText || "", 4000);
+      await filler.assertNoErrorAlert(state.matchErrorText || "", 3000);
     } catch (err) {
       if (state.catchErrors) {
         console.warn(`[WORKFLOW] [SUBMIT] Caught APEX alert as configured: ${err.message}`);
