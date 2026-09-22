@@ -68,6 +68,28 @@ class NegativeFormFiller {
     this.fieldData = {};
     if (options.fieldData) {
       this.setFieldData(options.fieldData);
+    } else {
+      // Support passing field mappings directly at the top level of options
+      const reservedKeys = new Set([
+        "scope",
+        "fieldData",
+        "filePath",
+        "uploadFiles",
+        "autoSelectDropdowns",
+        "defaultDropdownIndex",
+        "enableToggles",
+        "enforceMaxLength",
+        "testBoundaries",
+      ]);
+      const rootFieldData = {};
+      for (const [key, value] of Object.entries(options)) {
+        if (!reservedKeys.has(key)) {
+          rootFieldData[key] = value;
+        }
+      }
+      if (Object.keys(rootFieldData).length > 0) {
+        this.setFieldData(rootFieldData);
+      }
     }
 
     this.staticData = {
@@ -78,10 +100,9 @@ class NegativeFormFiller {
       options.uploadFiles !== undefined ? options.uploadFiles : Boolean(this.staticData.filePath);
 
     this.autoSelectDropdowns =
-      options.autoSelectDropdowns !== undefined ? options.autoSelectDropdowns : false;
+      options.autoSelectDropdowns !== undefined ? options.autoSelectDropdowns : true;
 
-    // In NegativeFormFiller, dropdown selection starts from 0th index (index 0)
-    // unlike ApexFormFiller where index starts from 1 (skipping placeholder).
+    // Default dropdown index fallback when autoSelectDropdowns is false (0th index placeholder)
     this.defaultDropdownIndex =
       options.defaultDropdownIndex !== undefined ? options.defaultDropdownIndex : 0;
 
@@ -98,6 +119,7 @@ class NegativeFormFiller {
   _normalizeLabel(text) {
     return (text || "")
       .replace(/\*/g, "")
+      .replace(/\((?:value required|optional|required)\)/gi, "")
       .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
@@ -105,13 +127,54 @@ class NegativeFormFiller {
 
   /**
    * Sets or updates field data mapping (e.g. { "Incident Title": "Sample", "Severity": "High" }).
-   * Keys are normalized automatically.
+   * Keys are normalized automatically and common APEX synonyms are registered.
    */
   setFieldData(data) {
     this.fieldData = {};
     for (const [key, value] of Object.entries(data || {})) {
-      this.fieldData[this._normalizeLabel(key)] = value;
+      const normalized = this._normalizeLabel(key);
+      this.fieldData[normalized] = value;
+
+      // Register common APEX label aliases
+      if (normalized === "incident title" || normalized === "title") {
+        this.fieldData["name of the incident"] = value;
+        this.fieldData["incident title"] = value;
+        this.fieldData["name"] = value;
+      } else if (normalized === "name of the incident" || normalized === "name") {
+        this.fieldData["incident title"] = value;
+        this.fieldData["name of the incident"] = value;
+        this.fieldData["title"] = value;
+      } else if (normalized === "incident description") {
+        this.fieldData["description"] = value;
+      } else if (normalized === "evidence description") {
+        this.fieldData["evidence"] = value;
+      }
     }
+  }
+
+  /**
+   * Resolves field value from fieldData by checking:
+   * 1. Direct normalized label match
+   * 2. APEX element ID (stripping page prefix, e.g. P4020_INCIDENT_TITLE -> incident title)
+   * 3. Element name attribute
+   */
+  _getFieldValue(label, elementId = null, name = null) {
+    if (label && this.fieldData[label] !== undefined) {
+      return this.fieldData[label];
+    }
+    if (elementId) {
+      const cleanId = this._normalizeLabel(elementId.replace(/^P\d+_/, "").replace(/_/g, " "));
+      if (this.fieldData[cleanId] !== undefined) {
+        return this.fieldData[cleanId];
+      }
+    }
+    if (name) {
+      const cleanName = this._normalizeLabel(name.replace(/^P\d+_/, "").replace(/_/g, " "));
+      if (this.fieldData[cleanName] !== undefined) {
+        return this.fieldData[cleanName];
+      }
+    }
+    return undefined;
   }
 
   /**
@@ -145,10 +208,22 @@ class NegativeFormFiller {
       }
     }
 
-    if (!label) return null;
+    if (!label) {
+      const ariaLabel = await field.getAttribute("aria-label").catch(() => null);
+      if (ariaLabel) return this._normalizeLabel(ariaLabel);
+
+      const placeholder = await field.getAttribute("placeholder").catch(() => null);
+      if (placeholder) return this._normalizeLabel(placeholder);
+
+      const cleanId = id.replace(/^P\d+_/, "").replace(/_/g, " ");
+      return this._normalizeLabel(cleanId);
+    }
 
     const text = (await label.first().innerText().catch(() => "")).trim();
-    return text ? this._normalizeLabel(text) : null;
+    if (text) return this._normalizeLabel(text);
+
+    const cleanId = id.replace(/^P\d+_/, "").replace(/_/g, " ");
+    return this._normalizeLabel(cleanId);
   }
 
   /** Lazily resolves form scope: modal iframe > open dialog > #t_Body_content > body */
@@ -186,9 +261,13 @@ class NegativeFormFiller {
   async fillAll() {
     await this._resolveScope();
 
-    const fieldCount = await this.scope
+    let fieldCount = await this.scope
       .locator("input, textarea, select")
       .count();
+    if (fieldCount === 0) {
+      await this.scope.locator("input, textarea, select").first().waitFor({ state: "attached", timeout: 4000 }).catch(() => {});
+      fieldCount = await this.scope.locator("input, textarea, select").count();
+    }
     if (fieldCount === 0) {
       throw new Error(
         "NegativeFormFiller: scope matched 0 form fields. Check that the scope " +
@@ -220,10 +299,13 @@ class NegativeFormFiller {
       if (await input.getAttribute("readonly").catch(() => null)) continue;
 
       const label = await this._getFieldLabel(input);
-      const matched = label !== null && this.fieldData[label] !== undefined;
+      const id = await input.getAttribute("id").catch(() => null);
+      const name = await input.getAttribute("name").catch(() => null);
+      const val = this._getFieldValue(label, id, name);
+      const matched = val !== undefined;
 
       if (matched) {
-        let text = String(this.fieldData[label]);
+        let text = String(val);
         const maxLengthAttr = await input.getAttribute("maxlength").catch(() => null);
         if (maxLengthAttr && this.enforceMaxLength) {
           text = text.substring(0, parseInt(maxLengthAttr, 10));
@@ -248,10 +330,13 @@ class NegativeFormFiller {
       if (await area.getAttribute("readonly").catch(() => null)) continue;
 
       const label = await this._getFieldLabel(area);
-      const matched = label !== null && this.fieldData[label] !== undefined;
+      const id = await area.getAttribute("id").catch(() => null);
+      const name = await area.getAttribute("name").catch(() => null);
+      const val = this._getFieldValue(label, id, name);
+      const matched = val !== undefined;
 
       if (matched) {
-        let text = String(this.fieldData[label]);
+        let text = String(val);
         const maxLengthAttr = await area.getAttribute("maxlength").catch(() => null);
         if (maxLengthAttr && this.enforceMaxLength) {
           text = text.substring(0, parseInt(maxLengthAttr, 10));
@@ -272,8 +357,8 @@ class NegativeFormFiller {
     const total = await selects.count();
     const handled = new Array(total).fill(false);
 
-    // Multi-pass handling for cascading dropdowns
-    const maxPasses = 3;
+    // Multi-pass handling for cascading dropdowns (e.g. Type -> Subtype)
+    const maxPasses = 4;
     for (let pass = 0; pass < maxPasses; pass++) {
       let progressed = false;
 
@@ -282,12 +367,16 @@ class NegativeFormFiller {
 
         const select = selects.nth(i);
         if (await select.isDisabled().catch(() => true)) {
-          handled[i] = true;
+          // If disabled on early pass, parent dropdown might enable it later
+          if (pass === maxPasses - 1) handled[i] = true;
           continue;
         }
 
         const label = await this._getFieldLabel(select);
-        const hasExplicitValue = label !== null && this.fieldData[label] !== undefined;
+        const id = await select.getAttribute("id").catch(() => null);
+        const name = await select.getAttribute("name").catch(() => null);
+        const desired = this._getFieldValue(label, id, name);
+        const hasExplicitValue = desired !== undefined;
 
         let optionCount = await select.locator("option").count();
         if (optionCount <= 1) {
@@ -299,8 +388,12 @@ class NegativeFormFiller {
         }
 
         if (optionCount > 0) {
+          // Defer single-option dropdowns on early passes if waiting for cascading AJAX
+          if (optionCount <= 1 && pass < maxPasses - 1 && !hasExplicitValue) {
+            continue;
+          }
+
           if (hasExplicitValue) {
-            const desired = this.fieldData[label];
             if (desired === "" || desired === null) {
               // Intentionally choose 0th index (placeholder)
               await select.selectOption({ index: 0 }).catch(() => {});
@@ -313,18 +406,24 @@ class NegativeFormFiller {
               });
             }
           } else {
-            // Negative testing: select from 0th index, unlike ApexFormFiller which starts from 1
+            // Random selection: pick from index 1 (skipping index 0 placeholder) up to optionCount - 1
             if (this.autoSelectDropdowns) {
-              // Range starts from index 0 up to optionCount - 1
-              const randomIndex = Math.floor(Math.random() * optionCount);
-              await select.selectOption({ index: randomIndex }).catch(() => {});
+              if (optionCount > 1) {
+                const min = 1;
+                const max = optionCount - 1;
+                const randomIndex = min + Math.floor(Math.random() * (max - min + 1));
+                await select.selectOption({ index: randomIndex }).catch(() => {});
+              } else {
+                await select.selectOption({ index: 0 }).catch(() => {});
+              }
             } else {
-              // Explicitly select 0th index
+              // Explicitly select default index (usually 0th placeholder)
               await select.selectOption({ index: this.defaultDropdownIndex }).catch(() => {});
             }
           }
 
           await this.page.waitForLoadState("networkidle").catch(() => {});
+          await this.page.waitForTimeout(250);
           handled[i] = true;
           progressed = true;
         }
@@ -544,7 +643,4 @@ class NegativeFormFiller {
   }
 }
 
-module.exports = {
-  NegativeFormFiller,
-  NegativeApexFormFiller: NegativeFormFiller,
-};
+module.exports = { NegativeFormFiller };
