@@ -265,7 +265,9 @@ class NegativeFormFiller {
       .locator("input, textarea, select")
       .count();
     if (fieldCount === 0) {
+
       await this.scope.locator("input, textarea, select").first().waitFor({ state: "attached", timeout: 4000 }).catch(() => { });
+
       fieldCount = await this.scope.locator("input, textarea, select").count();
     }
     if (fieldCount === 0) {
@@ -396,13 +398,15 @@ class NegativeFormFiller {
           if (hasExplicitValue) {
             if (desired === "" || desired === null) {
               // Intentionally choose 0th index (placeholder)
-              await select.selectOption({ index: 0 }).catch(() => { });
+
+              await select.selectOption({ index: 0 }).catch(() => {});
             } else if (typeof desired === "number") {
-              await select.selectOption({ index: desired }).catch(() => { });
+              await select.selectOption({ index: desired }).catch(() => {});
             } else {
               // Try matching by label first, then value
               await select.selectOption({ label: String(desired) }).catch(async () => {
-                await select.selectOption({ value: String(desired) }).catch(() => { });
+                await select.selectOption({ value: String(desired) }).catch(() => {});
+
               });
             }
           } else {
@@ -412,17 +416,19 @@ class NegativeFormFiller {
                 const min = 1;
                 const max = optionCount - 1;
                 const randomIndex = min + Math.floor(Math.random() * (max - min + 1));
-                await select.selectOption({ index: randomIndex }).catch(() => { });
+
+                await select.selectOption({ index: randomIndex }).catch(() => {});
               } else {
-                await select.selectOption({ index: 0 }).catch(() => { });
+                await select.selectOption({ index: 0 }).catch(() => {});
               }
             } else {
               // Explicitly select default index (usually 0th placeholder)
-              await select.selectOption({ index: this.defaultDropdownIndex }).catch(() => { });
+              await select.selectOption({ index: this.defaultDropdownIndex }).catch(() => {});
             }
           }
 
-          await this.page.waitForLoadState("networkidle").catch(() => { });
+          await this.page.waitForLoadState("networkidle").catch(() => {});
+
           await this.page.waitForTimeout(250);
           handled[i] = true;
           progressed = true;
@@ -454,13 +460,17 @@ class NegativeFormFiller {
         try {
           await toggle.check({ force: true });
         } catch {
+
           await toggle.click({ force: true }).catch(() => { });
+
         }
       } else if (!shouldCheck && alreadyChecked) {
         try {
           await toggle.uncheck({ force: true });
         } catch {
+
           await toggle.click({ force: true }).catch(() => { });
+
         }
       }
     }

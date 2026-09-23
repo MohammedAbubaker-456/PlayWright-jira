@@ -10,7 +10,10 @@ class LoginPage {
     this.loginButton = "button:has-text('Sign In')";
 
     // After login
+
+
     // this.goToModuleButton = "button:has-text('Go To Module')";
+
   }
 
   async selectModule(moduleName) {
