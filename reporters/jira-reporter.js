@@ -135,42 +135,25 @@ const { updateTestCaseExecution } = require("../utils/jira");
 function extractTestCaseId(test) {
   const fullTitle = test.titlePath().join(" ");
 
-  console.log(`[JIRA DEBUG] Full test title: ${fullTitle}`);
-
-  // --------------------------------------------------
-  // Format 1:
+  // Existing format:
   // TC_UI_INC_GLOBAL_002
-  // TC_UI_INC_REPORT_001
-  // etc.
-  // --------------------------------------------------
-
   const tcMatch = fullTitle.match(/\bTC_[A-Z0-9_]+\b/);
 
   if (tcMatch) {
-    console.log(`[JIRA DEBUG] Found Test Case ID: ${tcMatch[0]}`);
     return tcMatch[0];
   }
 
-  // --------------------------------------------------
-  // Format 2:
+  // Incident Management format:
   // IM-VAL-012
-  // IM-VAL-013
   // IM-REPORT-001
-  // etc.
-  // --------------------------------------------------
-
-  const imMatch = fullTitle.match(/\bIM-[A-Z]+-\d+\b/);
+  //
+  // Also works when the test name is:
+  // IM-VAL-012_multiple file chips render correctly
+  const imMatch = fullTitle.match(/\bIM-[A-Z]+-\d+(?=_|\b)/);
 
   if (imMatch) {
-    console.log(`[JIRA DEBUG] Found Test Case ID: ${imMatch[0]}`);
     return imMatch[0];
   }
-
-  // --------------------------------------------------
-  // No supported Test Case ID found
-  // --------------------------------------------------
-
-  console.log(`[JIRA DEBUG] No Test Case ID found in: ${fullTitle}`);
 
   return null;
 }
@@ -187,25 +170,12 @@ class JiraReporter {
   onTestEnd(test, result) {
     const testCaseId = extractTestCaseId(test);
 
-    console.log(
-      `[JIRA DEBUG] Test finished: ${test.title} | ${result.status}`,
-    );
-
-    // -----------------------------------------
-    // If no Test Case ID was found
-    // -----------------------------------------
-
     if (!testCaseId) {
       console.log(
-        `[JIRA] No Test Case ID found for: ${test.title}`,
+        `[JIRA] No Test Case ID found for: ${test.title}`
       );
-
       return;
     }
-
-    // -----------------------------------------
-    // Convert Playwright status → Jira status
-    // -----------------------------------------
 
     let jiraStatus;
 
@@ -223,19 +193,11 @@ class JiraReporter {
         process.env.JIRA_EXECUTION_STATUS_SKIPPED || "Skipped";
     }
 
-    // -----------------------------------------
-    // Execution metadata
-    // -----------------------------------------
-
     const executionDate = new Date()
       .toISOString()
       .split("T")[0];
 
     const environment = "Desktop / Chrome";
-
-    // -----------------------------------------
-    // Jira comment
-    // -----------------------------------------
 
     let comment = [
       "Playwright Execution",
@@ -248,10 +210,6 @@ class JiraReporter {
       `Retry: ${result.retry}`,
     ].join("\n");
 
-    // -----------------------------------------
-    // Add error information
-    // -----------------------------------------
-
     if (result.error) {
       comment += [
         "",
@@ -260,22 +218,14 @@ class JiraReporter {
       ].join("\n");
     }
 
-    // -----------------------------------------
-    // Find screenshot attachment
-    // -----------------------------------------
-
     const screenshot = result.attachments.find(
       (attachment) =>
         attachment.path &&
         (
           attachment.contentType === "image/png" ||
           attachment.name === "screenshot"
-        ),
+        )
     );
-
-    // -----------------------------------------
-    // Queue Jira update
-    // -----------------------------------------
 
     this.results.push({
       testCaseId,
@@ -289,7 +239,7 @@ class JiraReporter {
     });
 
     console.log(
-      `[JIRA] Queued ${testCaseId} → ${jiraStatus}`,
+      `[JIRA] Queued ${testCaseId} → ${jiraStatus}`
     );
   }
 
@@ -299,26 +249,20 @@ class JiraReporter {
 
   async onEnd() {
     console.log(
-      `\n[JIRA] Starting Jira updates for ${this.results.length} test(s)`,
+      `\n[JIRA] Starting Jira updates for ${this.results.length} test(s)`
     );
 
-    // Nothing to update
     if (this.results.length === 0) {
       console.log(
-        "[JIRA] No test results queued for Jira update.",
+        "[JIRA] No test results queued for Jira update."
       );
-
       return;
     }
-
-    // -----------------------------------------
-    // Process each test
-    // -----------------------------------------
 
     for (const execution of this.results) {
       try {
         console.log(
-          `[JIRA] Updating ${execution.testCaseId} → ${execution.jiraStatus}`,
+          `[JIRA] Updating ${execution.testCaseId} → ${execution.jiraStatus}`
         );
 
         const issueKey = await updateTestCaseExecution({
@@ -336,36 +280,34 @@ class JiraReporter {
         });
 
         console.log(
-          `[JIRA] ${execution.testCaseId} → ${issueKey} → ${execution.jiraStatus}`,
+          `[JIRA] ${execution.testCaseId} → ${issueKey} → ${execution.jiraStatus}`
         );
 
         if (execution.screenshotPath) {
           console.log(
-            `[JIRA] Screenshot attached to ${issueKey}`,
+            `[JIRA] Screenshot attached to ${issueKey}`
           );
         }
       } catch (error) {
         console.error(
           `[JIRA] Failed to update ${execution.testCaseId}:`,
-          error.message,
+          error.message
         );
 
         if (error.response) {
           console.error(
-            `[JIRA] Response status: ${error.response.status}`,
+            `[JIRA] Response status: ${error.response.status}`
           );
 
           console.error(
             `[JIRA] Response data:`,
-            error.response.data,
+            error.response.data
           );
         }
       }
     }
 
-    console.log(
-      "[JIRA] Jira processing completed",
-    );
+    console.log("[JIRA] Jira processing completed");
   }
 
   printsToStdio() {
