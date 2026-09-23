@@ -3,7 +3,7 @@ const LoginPage = require("../../pages/loginpage");
 const { NegativeFormFiller } = require("../../utils/negativeFormFiller");
 
 test.describe('Validation UI Test Cases', () => {
-  test('IM-VAL-001_titlemandatory', async ({ page }) => {
+  test('IM-VAL-001 , titlemandatory', async ({ page }) => {
 
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
@@ -35,7 +35,7 @@ test.describe('Validation UI Test Cases', () => {
   });
 
 
-  test('IM-VAL-002_minimum description not allowed', async ({ page }) => {
+  test('IM-VAL-002 , minimum description not allowed', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
       "camila.rocha@cornerstoneinfra.com",
@@ -69,7 +69,7 @@ test.describe('Validation UI Test Cases', () => {
   });
 
 
-  test('IM-VAL-003_no script executes', async ({ page }) => {
+  test('IM-VAL-003 , no script executes', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
       "camila.rocha@cornerstoneinfra.com",
@@ -105,7 +105,7 @@ test.describe('Validation UI Test Cases', () => {
   });
 
 
-  test("IM-VAL-004_severity validation/IM-VAL-005_type validation/IM-VAL-008_site validation", async ({ page }) => {
+  test("IM-VAL-004 , severity validation/IM-VAL-005_type validation/IM-VAL-008_site validation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
       "camila.rocha@cornerstoneinfra.com",
@@ -137,7 +137,7 @@ test.describe('Validation UI Test Cases', () => {
   });
 
 
-  test('IM-VAL-010_unsupported file/IM-VAL-011_large file size', async ({ page }) => {
+  test('IM-VAL-010 , unsupported file/IM-VAL-011_large file size', async ({ page }) => {
 
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
@@ -166,7 +166,7 @@ test.describe('Validation UI Test Cases', () => {
   });
 
 
-  test('IM-VAL-012_multiple file chips render correctly', async ({ page }) => {
+  test('IM-VAL-012 , multiple file chips render correctly', async ({ page }) => {
 
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication(
@@ -201,32 +201,6 @@ test.describe('Validation UI Test Cases', () => {
     for (const fileType of supportedFileTypes) {
       await expect(page.getByText(fileType, { exact: false })).toBeVisible();
     }
-  });
-
-
-
-  test('IM-VAL-012_multiple file chips render correctly', async ({ page }) => {
-
-    const loginPage = new LoginPage(page);
-    await loginPage.loginToApplication(
-      "camila.rocha@cornerstoneinfra.com",
-      "oracle",
-      "Incident Management"
-    );
-    await page.waitForLoadState("networkidle");
-    await page.getByRole("button", { name: "Report New Incident" }).click();
-    await page.waitForLoadState("networkidle");
-
-    const filler = new NegativeFormFiller(page, {
-      fieldData: {
-        "Name of the Incident": "hello this is shumair from tesing team",
-        "Incident Description": "A forklift was moving palletized material when a pedestrian entered the vehicle route. The operator braked and avoided contact. The event occurred in the Warehouse during the morning shift. Immediate controls were applied, the affected activity was made safe, and the HSE team was notified for investigation and follow-up.",
-        "Evidence Description": "CCTV footage, forklift inspection checklist, pedestrian-route photographs, witness statement, and supervisor notification were reviewed. Additional supporting evidence included the applicable risk assessment or safe-work procedure, relevant training or competency records, and the corrective-action or follow-up inspection record.",
-      },
-      filePath: ["C:/Users/Shumair Javeed/Downloads/Incident Management - Operational Workflow Diagram.png", "C:/Users/Shumair Javeed/OneDrive - SoapBox/Desktop/Incident Management - UI Test Cases 1.pdf", "C:/Users/Shumair Javeed/OneDrive - SoapBox/Desktop/evidence images/evidence-6.jpg"],
-    });
-
-    const issues = await filler.fillAll();
   });
 
 });
