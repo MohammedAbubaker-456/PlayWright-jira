@@ -50,7 +50,7 @@ async function executeStepAction(page, state, context) {
       console.log(`[WORKFLOW] [ACTION] Start Investigation button not visible, ensuring Investigation tab is clicked...`);
       const invTab = _resolveElement(page, "investigationTab", context.pageRegistry);
       if ((await invTab.count().catch(() => 0)) > 0) {
-        await invTab.first().click().catch(() => {});
+        await invTab.first().click().catch(() => { });
         await page.waitForTimeout(1000);
       }
     }
@@ -78,8 +78,13 @@ async function executeStepAction(page, state, context) {
   const locator = _resolveElement(container, targetKey, context.pageRegistry);
   console.log(`[WORKFLOW] [ACTION] Clicking "${targetKey}" in state "${context.currentState}"...`);
 
+  if (state.reload) {
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+  }
+
   await locator.first().waitFor({ state: "visible", timeout: state.timeout || 15000 });
-  await locator.first().scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+  await locator.first().scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => { });
 
   try {
     await locator.first().click({ timeout: state.timeout || 10000 });
@@ -87,13 +92,13 @@ async function executeStepAction(page, state, context) {
     console.warn(`[WORKFLOW] [ACTION] Standard click on "${targetKey}" failed (${clickErr.message}), checking overlays and retrying with force click...`);
     const modalClose = page.locator("div[role='dialog']:visible button.ui-dialog-titlebar-close, div[role='dialog']:visible button[title='Close'], button.ui-dialog-titlebar-close:visible");
     if ((await modalClose.count().catch(() => 0)) > 0) {
-      await modalClose.first().click().catch(() => {});
+      await modalClose.first().click().catch(() => { });
       await page.waitForTimeout(500);
     }
     await locator.first().click({ force: true, timeout: 5000 });
   }
 
-  await page.waitForLoadState("networkidle").catch(() => {});
+  await page.waitForLoadState("networkidle").catch(() => { });
 
   // If this was a tab switch, allow the tab panel animation/rendering to complete
   const isTabAction =
@@ -115,9 +120,9 @@ async function executeStepAction(page, state, context) {
       await itemLocator.first().click();
     } catch {
       console.log(`[WORKFLOW] [ACTION] Triggering menu item "${menuItemKey}" directly via evaluate...`);
-      await itemLocator.first().evaluate((el) => el.click()).catch(() => {});
+      await itemLocator.first().evaluate((el) => el.click()).catch(() => { });
     }
-    await page.waitForLoadState("networkidle").catch(() => {});
+    await page.waitForLoadState("networkidle").catch(() => { });
   }
 
   // Handle optional APEX modal confirmation dialog (e.g. "OK" button)
@@ -129,7 +134,7 @@ async function executeStepAction(page, state, context) {
       if ((await okButton.count()) > 0 && (await okButton.first().isVisible({ timeout: 3500 }))) {
         console.log(`[WORKFLOW] [ACTION] Confirming APEX dialog popup (OK)...`);
         await okButton.first().click();
-        await page.waitForLoadState("networkidle").catch(() => {});
+        await page.waitForLoadState("networkidle").catch(() => { });
       }
     } catch {
       // Dialog did not appear, proceed
@@ -138,7 +143,7 @@ async function executeStepAction(page, state, context) {
 
   // If this action was closing or submitting a modal dialog, wait for overlay to vanish
   if (targetKey.toLowerCase().includes("sign") || targetKey.toLowerCase().includes("lock") || targetKey.toLowerCase().includes("save")) {
-    await page.locator("div[role='dialog']:visible, .ui-dialog:visible").waitFor({ state: "hidden", timeout: 6000 }).catch(() => {});
+    await page.locator("div[role='dialog']:visible, .ui-dialog:visible").waitFor({ state: "hidden", timeout: 6000 }).catch(() => { });
     await page.waitForTimeout(800);
   }
 
@@ -156,7 +161,7 @@ async function executeStepAction(page, state, context) {
 
   if (state.waitFor) {
     const waitLoc = _resolveElement(container, state.waitFor, context.pageRegistry);
-    await waitLoc.first().waitFor({ state: "visible", timeout: 8000 }).catch(() => {});
+    await waitLoc.first().waitFor({ state: "visible", timeout: 8000 }).catch(() => { });
   }
 
   await page.waitForTimeout(600);

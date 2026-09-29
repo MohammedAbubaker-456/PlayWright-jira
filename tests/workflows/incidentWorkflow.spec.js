@@ -12,13 +12,13 @@ test.use({
 });
 
 test.describe("Incident Management Module - Live Application Workflow", () => {
-  test("TC_INC_WF_001 - Incident Operational Workflow Execution", async ({ page }, testInfo) => {
+  test("Incident Operational Workflow Execution", async ({ page }, testInfo) => {
     test.setTimeout(180000);
 
     // 1. Session Login and Module Selection via LoginPage
     const loginPage = new LoginPage(page);
     await loginPage.loginToApplication("camila.rocha@cornerstoneinfra.com", "oracle", "Incident Management");
-    await page.waitForLoadState("networkidle").catch(() => {});
+    await page.waitForLoadState("networkidle").catch(() => { });
 
     // Execute the full Incident workflow
     console.log("\n>>> STARTING GENERIC WORKFLOW ENGINE FOR INCIDENT MODULE <<<");

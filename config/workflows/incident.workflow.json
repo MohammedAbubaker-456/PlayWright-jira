@@ -55,6 +55,11 @@
           "type": "notVisible",
           "locator": "apexErrorAlert",
           "timeout": 3000
+        },
+        {
+          "type": "visible",
+          "locator": "incidentSuccessMessage",
+          "timeout": 7000
         }
       ]
     },
@@ -71,7 +76,10 @@
       "triggerButton": "assignButton",
       "frame": "assignModalIframe",
       "userField": "assignUserSelect",
+      "userValue": "camila.rocha@cornerstoneinfra",
       "submitButton": "assignConfirmButton",
+      "reload": true,
+      "refreshPage": true,
       "next": "START_INVESTIGATION"
     },
     "START_INVESTIGATION": {

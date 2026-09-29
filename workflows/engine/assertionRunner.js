@@ -35,16 +35,18 @@ class AssertionRunner {
         }
 
         case "visible": {
-          const loc = this._resolveLocator(page, assertion.locator, pageRegistry);
-          await expect(loc, `Expected element "${assertion.locator}" to be visible`).toBeVisible({
+          const target = assertion.locator || (assertion.text ? `text=${assertion.text}` : null);
+          const loc = this._resolveLocator(page, target, pageRegistry);
+          await expect(loc.first(), `Expected element "${target}" to be visible`).toBeVisible({
             timeout: assertion.timeout || 5000,
           });
           break;
         }
 
         case "notVisible": {
-          const loc = this._resolveLocator(page, assertion.locator, pageRegistry);
-          await expect(loc, `Expected element "${assertion.locator}" not to be visible`).not.toBeVisible({
+          const target = assertion.locator || (assertion.text ? `text=${assertion.text}` : null);
+          const loc = this._resolveLocator(page, target, pageRegistry);
+          await expect(loc.first(), `Expected element "${target}" not to be visible`).not.toBeVisible({
             timeout: assertion.timeout || 5000,
           });
           break;
@@ -52,7 +54,7 @@ class AssertionRunner {
 
         case "text": {
           const loc = this._resolveLocator(page, assertion.locator, pageRegistry);
-          await expect(loc, `Expected element "${assertion.locator}" to contain text "${assertion.text}"`).toContainText(
+          await expect(loc.first(), `Expected element "${assertion.locator}" to contain text "${assertion.text}"`).toContainText(
             assertion.text,
             { timeout: assertion.timeout || 5000 }
           );

@@ -25,6 +25,26 @@ const handlers = {
   closureinitiation: executeStepClosureInitiation,
   closurereview: executeStepClosureReview,
   closure: executeStepClosureReview,
+  reload: async (page, state) => {
+    console.log(`[WORKFLOW] [RELOAD] Reloading page...`);
+    await page.reload();
+    await page.waitForLoadState("networkidle").catch(() => {});
+    await page.waitForTimeout(1000);
+    return {
+      actionTaken: "RELOADED",
+      nextState: state.next,
+    };
+  },
+  refresh: async (page, state) => {
+    console.log(`[WORKFLOW] [REFRESH] Refreshing page...`);
+    await page.reload();
+    await page.waitForLoadState("networkidle").catch(() => {});
+    await page.waitForTimeout(1000);
+    return {
+      actionTaken: "REFRESHED",
+      nextState: state.next,
+    };
+  },
 
   decision: async (page, state, context) => {
     let result = "yes";

@@ -124,7 +124,16 @@ async function executeStepAssignment(page, state, context) {
   // ============================================================
 
   const options = dropdown.locator("option");
-  const optionCount = await options.count();
+  let optionCount = await options.count();
+
+  // If dropdown options haven't populated yet, wait up to 5 seconds
+  if (optionCount <= 1) {
+    const deadline = Date.now() + 5000;
+    while (optionCount <= 1 && Date.now() < deadline) {
+      await page.waitForTimeout(250);
+      optionCount = await options.count();
+    }
+  }
 
   console.log(`[WORKFLOW] [ASSIGNMENT] Dropdown contains ${optionCount} options.`);
 
@@ -136,7 +145,7 @@ async function executeStepAssignment(page, state, context) {
   for (let i = 0; i < optionCount; i++) {
     const option = options.nth(i);
     const text = (await option.textContent())?.trim() || "";
-    const value = await option.getAttribute("value");
+    const value = (await option.getAttribute("value"))?.trim() || "";
     users.push({ index: i, text, value });
   }
 
@@ -155,13 +164,51 @@ async function executeStepAssignment(page, state, context) {
     throw new Error(`[ASSIGNMENT] No valid users available in dropdown.`);
   }
 
-  const randomUser = validUsers[Math.floor(Math.random() * validUsers.length)];
+  const configuredUserValue = state.userValue ? String(state.userValue).trim() : null;
+  let selectedUser = null;
 
-  console.log(
-    `[WORKFLOW] [ASSIGNMENT] Dynamically selecting user: ${randomUser.text} (index=${randomUser.index}, value=${randomUser.value})`
-  );
+  if (configuredUserValue) {
+    console.log(`[WORKFLOW] [ASSIGNMENT] Selecting user: ${configuredUserValue}`);
+    const targetLower = configuredUserValue.toLowerCase();
 
-  await dropdown.selectOption({ value: randomUser.value });
+    // 1. Exact match on visible text or value (case-insensitive & trimmed)
+    selectedUser = validUsers.find(
+      (u) =>
+        u.text.toLowerCase() === targetLower ||
+        u.value.toLowerCase() === targetLower
+    );
+
+    // 2. Substring / contains match (case-insensitive)
+    if (!selectedUser) {
+      selectedUser = validUsers.find(
+        (u) =>
+          u.text.toLowerCase().includes(targetLower) ||
+          u.value.toLowerCase().includes(targetLower)
+      );
+    }
+
+    if (!selectedUser) {
+      const availableUsers = validUsers.map((u) => u.text || u.value).join(", ");
+      throw new Error(
+        `[ASSIGNMENT] Assignment user "${configuredUserValue}" was not found in dropdown "${userFieldKey}". Available users: ${availableUsers || "none"}`
+      );
+    }
+
+    console.log(`[WORKFLOW] [ASSIGNMENT] User selected: ${selectedUser.text || selectedUser.value}`);
+  } else {
+    selectedUser = validUsers[Math.floor(Math.random() * validUsers.length)];
+    console.log(
+      `[WORKFLOW] [ASSIGNMENT] Dynamically selecting user: ${selectedUser.text} (index=${selectedUser.index}, value=${selectedUser.value})`
+    );
+  }
+
+  if (selectedUser.value) {
+    await dropdown.selectOption({ value: selectedUser.value }).catch(async () => {
+      await dropdown.selectOption({ index: selectedUser.index });
+    });
+  } else {
+    await dropdown.selectOption({ index: selectedUser.index });
+  }
 
   const selectedValue = await dropdown.inputValue();
   console.log(`[WORKFLOW] [ASSIGNMENT] Selected dropdown value: ${selectedValue}`);
@@ -202,12 +249,22 @@ async function executeStepAssignment(page, state, context) {
   await page.waitForLoadState("networkidle").catch(() => {});
   await page.waitForTimeout(1500);
 
+  // If reload / refreshPage is configured, refresh the page after confirmation
+  if (state.reload || state.refresh || state.refreshPage) {
+    console.log(`[WORKFLOW] [ASSIGNMENT] Refreshing page after assignment confirmation...`);
+    const modalDialog = page.locator("div[role='dialog']:visible, .ui-dialog:visible, iframe:visible");
+    await modalDialog.waitFor({ state: "hidden", timeout: 8000 }).catch(() => {});
+    await page.reload();
+    await page.waitForLoadState("networkidle").catch(() => {});
+    await page.waitForTimeout(1500);
+  }
+
   return {
     actionTaken: "ASSIGNED",
     nextState: state.next,
     details: {
-      user: randomUser.text,
-      value: randomUser.value,
+      user: selectedUser.text,
+      value: selectedUser.value,
     },
   };
 }

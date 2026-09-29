@@ -59,6 +59,11 @@ function registerIncidentPages(registry = defaultRegistry) {
       "//div[contains(@class,'a-Notification') and (contains(.,'error') or contains(.,'ORA-'))] | " +
       "//*[@id='t_Alert_Notification'] | " +
       "//*[contains(text(),'error has occurred') or contains(text(),'error occurred')]",
+    incidentSuccessAlert:
+      "//div[contains(@class,'t-Alert--success') or contains(@class,'a-Notification--success') or @id='t_Alert_Success'] | " +
+      "//*[contains(text(),'Incident has been created successfully.')]",
+    incidentSuccessMessage:
+      "//*[contains(text(),'Incident has been created successfully.')]",
 
     // 2. Dashboard Open Incident Selection
     dashboardOpenIncidentEye:

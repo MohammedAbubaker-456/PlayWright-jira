@@ -8,8 +8,9 @@
  *   - text inputs / textareas -> matched to `fieldData` by their <label>
  *                                 text (normalized); falls back to random
  *                                 lorem text if no label match is found.
- *   - selects                 -> a RANDOM option index (never label-matched
- *                                 on purpose - see selectDropdowns()).
+ *   - selects                 -> use label-matched fieldData value when
+ *                                 provided; otherwise randomly select a
+ *                                 real option.
  *   - file inputs             -> uploads a static file path.
  *
  * Fields that don't exist in a given module are simply skipped, since the
@@ -58,7 +59,7 @@ class ApexFormFiller {
    * @param {import('@playwright/test').Page} page
    * @param {Object} options
    * @param {import('@playwright/test').Locator} [options.scope] - Locator scoped to the form/region/dialog. Defaults to #t_Body_content (see note above).
-   * @param {Object} [options.fieldData] - Map of label text -> value, e.g. { "Incident Title": "My title" }. Text/textarea fields whose <label> matches a key get that value; unmatched fields get fixed dummy lorem text.
+   * @param {Object} [options.fieldData] - Map of label text -> value, e.g. { "Incident Title": "My title", "Severity": "High" }. Text/textarea and select fields whose <label> matches a key get that value; unmatched text fields get fixed dummy lorem text, unmatched selects get a random option.
    * @param {string} [options.filePath] - Static file path used for file uploads.
    * @param {boolean} [options.testBoundaries] - Whether to run min/max boundary tests on UNMATCHED textareas (lorem fallback only). Default true.
    */
@@ -109,6 +110,7 @@ class ApexFormFiller {
   _normalizeLabel(text) {
     return (text || "")
       .replace(/\*/g, "")
+      .replace(/\((?:value required|optional|required)\)/gi, "")
       .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
@@ -123,25 +125,60 @@ class ApexFormFiller {
   setFieldData(data) {
     this.fieldData = {};
     for (const [key, value] of Object.entries(data || {})) {
-      this.fieldData[this._normalizeLabel(key)] = value;
+      const norm = this._normalizeLabel(key);
+      this.fieldData[norm] = value;
+
+      // Handle common APEX label aliases and suffix variations (e.g. "Site" vs "Site Name")
+      if (norm.endsWith(" name")) {
+        this.fieldData[norm.replace(/ name$/, "")] = value;
+      } else {
+        this.fieldData[`${norm} name`] = value;
+      }
+      if (norm.endsWith(" id")) {
+        this.fieldData[norm.replace(/ id$/, "")] = value;
+      }
+      if (norm === "owner group" || norm === "owner group id") {
+        this.fieldData["group"] = value;
+      } else if (norm === "group") {
+        this.fieldData["owner group"] = value;
+      }
     }
   }
 
   /** Finds the <label for="..."> text for a given field, normalized. Returns null if none found. */
   async _getFieldLabel(field) {
     const id = await field.getAttribute("id").catch(() => null);
-    if (!id) return null;
 
     let label = null;
-    if (this.scope && typeof this.scope.locator === "function") {
-      label = this.scope.locator(`label[for='${id}']`);
-      if ((await label.count().catch(() => 0)) === 0) {
-        label = null;
+    if (id) {
+      if (this.scope && typeof this.scope.locator === "function") {
+        label = this.scope.locator(`label[for='${id}']`);
+        if ((await label.count().catch(() => 0)) === 0) {
+          label = null;
+        }
+      }
+      if (!label) {
+        label = this.page.locator(`label[for='${id}']`);
+        if ((await label.count().catch(() => 0)) === 0) label = null;
       }
     }
+
     if (!label) {
-      label = this.page.locator(`label[for='${id}']`);
-      if ((await label.count().catch(() => 0)) === 0) return null;
+      const containerLabel = field.locator(
+        "xpath=ancestor::*[contains(@class,'t-Form-fieldContainer') or contains(@class,'t-Form-item')][1]//label"
+      );
+      if ((await containerLabel.count().catch(() => 0)) > 0) {
+        label = containerLabel.first();
+      }
+    }
+
+    if (!label) {
+      const ariaLabel = await field.getAttribute("aria-label").catch(() => null);
+      if (ariaLabel) return this._normalizeLabel(ariaLabel);
+      if (id) {
+        return this._normalizeLabel(id.replace(/^P\d+_/, "").replace(/_/g, " "));
+      }
+      return null;
     }
 
     const text = (
@@ -150,7 +187,11 @@ class ApexFormFiller {
         .innerText()
         .catch(() => "")
     ).trim();
-    return text ? this._normalizeLabel(text) : null;
+    if (text) return this._normalizeLabel(text);
+    if (id) {
+      return this._normalizeLabel(id.replace(/^P\d+_/, "").replace(/_/g, " "));
+    }
+    return null;
   }
 
   /** Lazily resolves the scope: explicit option > visible iframe/dialog > #t_Body_content > body */
@@ -311,21 +352,13 @@ class ApexFormFiller {
     }
   }
 
-  // ---------- DROPDOWNS (cascade-aware) ----------
+  // ---------- DROPDOWNS (cascade-aware, label-matched with random fallback) ----------
   async selectDropdowns() {
-    let selects = this.scope.locator("select.apex-item-select:visible");
-    if ((await selects.count()) === 0) {
-      selects = this.scope.locator("select:visible");
-    }
-
+    const selects = this.scope.locator("select:visible");
     const total = await selects.count();
     const handled = new Array(total).fill(false);
 
-    // Multiple passes: some dropdowns (like Zone/Location/Category) only
-    // populate their options AFTER a parent dropdown (Site/Area/Emergency
-    // Type) has been selected and its AJAX call has returned. A single
-    // left-to-right pass can hit a downstream field before its options
-    // exist yet, so we retry unresolved fields across a few passes.
+    // Multi-pass handling: cascading dropdowns populate options AFTER parent dropdown selection
     const maxPasses = 4;
     for (let pass = 0; pass < maxPasses; pass++) {
       let progressed = false;
@@ -334,38 +367,169 @@ class ApexFormFiller {
         if (handled[i]) continue;
 
         const select = selects.nth(i);
-        if (await select.isDisabled().catch(() => true)) {
-          handled[i] = true; // disabled fields are never going to become fillable
+        let isDisabled = await select.isDisabled().catch(() => true);
+
+        // If disabled on early pass, wait briefly for parent dropdown's AJAX to enable it
+        if (isDisabled) {
+          const deadline = Date.now() + 1500;
+          while (isDisabled && Date.now() < deadline) {
+            await this.page.waitForTimeout(200);
+            isDisabled = await select.isDisabled().catch(() => true);
+          }
+        }
+        if (isDisabled) {
+          if (pass === maxPasses - 1) handled[i] = true;
           continue;
         }
 
-        let optionCount = await select.locator("option").count();
+        // Get options for this select
+        let options = await select.locator("option").evaluateAll((opts) =>
+          opts.map((o, idx) => ({
+            index: idx,
+            text: (o.text || "").trim(),
+            value: (o.value || "").trim(),
+          }))
+        );
 
-        // If this field looks empty right now, give it a short window to
-        // populate (cascading AJAX) before deciding to skip it this pass.
-        if (optionCount <= 1) {
-          const deadline = Date.now() + 2000;
-          while (optionCount <= 1 && Date.now() < deadline) {
+        // Filter out empty options or default placeholder like "- Select -"
+        let validOptions = options.filter(
+          (o) =>
+            o.text !== "" &&
+            o.value !== "" &&
+            !o.text.startsWith("- Select") &&
+            !o.text.startsWith("%null%")
+        );
+
+        // If empty, wait up to 2.5s for cascading LOV options to arrive
+        if (validOptions.length === 0) {
+          const deadline = Date.now() + 2500;
+          while (validOptions.length === 0 && Date.now() < deadline) {
             await this.page.waitForTimeout(250);
-            optionCount = await select.locator("option").count();
+            options = await select.locator("option").evaluateAll((opts) =>
+              opts.map((o, idx) => ({
+                index: idx,
+                text: (o.text || "").trim(),
+                value: (o.value || "").trim(),
+              }))
+            );
+            validOptions = options.filter(
+              (o) =>
+                o.text !== "" &&
+                o.value !== "" &&
+                !o.text.startsWith("- Select") &&
+                !o.text.startsWith("%null%")
+            );
           }
         }
 
-        if (optionCount > 1) {
-          // Random selection (deliberately NOT label-matched): pick any
-          // index from 1 (skipping the "- Select -" placeholder at 0) up
-          // to the last real option, inclusive.
-          const min = 1;
-          const max = optionCount - 1;
-          const randomIndex = min + Math.floor(Math.random() * (max - min + 1));
-          await select.selectOption({ index: randomIndex });
-          await this.page.waitForLoadState("networkidle").catch(() => { });
+        // If still no valid options on early pass, defer to next pass (cascading parent may populate it)
+        if (validOptions.length === 0) {
+          if (pass === maxPasses - 1) handled[i] = true;
+          continue;
+        }
+
+        const label = await this._getFieldLabel(select);
+        let requested = null;
+        if (label && this.fieldData[label] !== undefined) {
+          requested = this.fieldData[label];
+        } else {
+          // Check clean ID fallback if label didn't match directly
+          const id = await select.getAttribute("id").catch(() => null);
+          if (id) {
+            const cleanId = this._normalizeLabel(id.replace(/^P\d+_/, "").replace(/_/g, " "));
+            if (this.fieldData[cleanId] !== undefined) {
+              requested = this.fieldData[cleanId];
+            }
+          }
+        }
+
+        const hasExplicitValue = requested !== null && requested !== undefined && String(requested).trim() !== "";
+        let chosenOption = null;
+
+        if (hasExplicitValue) {
+          const reqStr = String(requested).trim();
+          const reqLower = reqStr.toLowerCase();
+
+          // 1. Exact match by text or value
+          chosenOption = validOptions.find(
+            (o) =>
+              o.text.toLowerCase() === reqLower ||
+              o.value.toLowerCase() === reqLower
+          );
+
+          // 2. Substring match (e.g. "Chemical Spill" for "Spill")
+          if (!chosenOption) {
+            chosenOption = validOptions.find(
+              (o) =>
+                o.text.toLowerCase().includes(reqLower) ||
+                reqLower.includes(o.text.toLowerCase())
+            );
+          }
+
+          // 3. Token match (e.g. "Spill/Leak" contains "spill" which matches "Chemical Spill")
+          if (!chosenOption) {
+            const tokens = reqLower.split(/[\s\/\-_]+/).filter((t) => t.length > 2);
+            chosenOption = validOptions.find((o) => {
+              const optLower = o.text.toLowerCase();
+              return tokens.some((token) => optLower.includes(token));
+            });
+          }
+
+          if (!chosenOption) {
+            // If requested value cannot be matched on an early pass, defer in case cascading LOV changes options
+            if (pass < maxPasses - 1) {
+              continue;
+            }
+            // On final pass, fall back to random valid option so form can submit
+            console.warn(
+              `[ApexFormFiller] Dropdown "${label || 'unnamed'}": Explicit value "${requested}" not found in options [${validOptions.map(o => o.text).join(", ")}]. Selecting random fallback.`
+            );
+            const randomIndex = Math.floor(Math.random() * validOptions.length);
+            chosenOption = validOptions[randomIndex];
+          }
+        } else {
+          // No explicit value: random selection among valid options
+          const randomIndex = Math.floor(Math.random() * validOptions.length);
+          chosenOption = validOptions[randomIndex];
+        }
+
+        if (chosenOption) {
+          await select.selectOption({ index: chosenOption.index });
+          await select.dispatchEvent("change").catch(() => {});
+          await this.page.waitForTimeout(300);
+          await this.page.waitForLoadState("networkidle").catch(() => {});
           handled[i] = true;
           progressed = true;
         }
       }
 
-      if (!progressed) break; // nothing new became fillable this pass, stop early
+      if (handled.every(Boolean)) break;
+
+      // If nothing progressed on this pass, but there are unhandled dropdowns with valid options:
+      // Pick a random option for the first unhandled dropdown to kick off any cascading dependency
+      if (!progressed) {
+        let kickStarted = false;
+        for (let i = 0; i < total; i++) {
+          if (handled[i]) continue;
+          const select = selects.nth(i);
+          const validOptions = await select.locator("option").evaluateAll((opts) =>
+            opts
+              .map((o, idx) => ({ index: idx, text: (o.text || "").trim(), value: (o.value || "").trim() }))
+              .filter((o) => o.text !== "" && o.value !== "" && !o.text.startsWith("- Select") && !o.text.startsWith("%null%"))
+          );
+          if (validOptions.length > 0) {
+            const chosen = validOptions[Math.floor(Math.random() * validOptions.length)];
+            await select.selectOption({ index: chosen.index });
+            await select.dispatchEvent("change").catch(() => {});
+            await this.page.waitForTimeout(300);
+            await this.page.waitForLoadState("networkidle").catch(() => {});
+            handled[i] = true;
+            kickStarted = true;
+            break;
+          }
+        }
+        if (!kickStarted) break;
+      }
     }
   }
 
