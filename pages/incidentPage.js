@@ -67,14 +67,19 @@ function registerIncidentPages(registry = defaultRegistry) {
 
     // 2. Dashboard Open Incident Selection
     dashboardOpenIncidentEye:
-      "//tr[.//td[contains(normalize-space(),'Open')]]//span[contains(@class,'fa-eye')]/parent::a | " +
-      "//tr[.//td[contains(normalize-space(),'Open')]]//a[.//span[contains(@class,'fa-eye')]] | " +
-      "//tr[.//td[contains(normalize-space(),'Open')]]//span[contains(@class,'fa-eye')] | " +
-      "//tbody/tr[1]//span[contains(@class,'fa-eye')]/parent::a",
+      ".//span[contains(@class,'fa-eye')]/parent::a | " +
+      ".//a[.//span[contains(@class,'fa-eye')]] | " +
+      ".//span[contains(@class,'fa-eye')] | " +
+      ".//td[contains(@class,'action') or position()=last()]//a | " +
+      ".//td[last()]//a | " +
+      ".//a",
     dashboardIncidentEye:
-      "//tbody/tr[1]//span[contains(@class,'fa-eye')]/parent::a | " +
-      "//tbody/tr[1]//a[.//span[contains(@class,'fa-eye')]] | " +
-      "//tbody/tr[1]//td[contains(@class,'action') or position()=last()]//a",
+      ".//span[contains(@class,'fa-eye')]/parent::a | " +
+      ".//a[.//span[contains(@class,'fa-eye')]] | " +
+      ".//span[contains(@class,'fa-eye')] | " +
+      ".//td[contains(@class,'action') or position()=last()]//a | " +
+      ".//td[last()]//a | " +
+      ".//a",
 
     // 3. Assignment
     assignButton:

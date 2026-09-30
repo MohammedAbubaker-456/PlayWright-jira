@@ -98,16 +98,20 @@
       "target": "startInvestigationButton",
       "modalConfirm": true,
       "checkErrors": true,
-      "next": "NAV_INVESTIGATION_TAB"
+      "next": "NAV_EVIDENCE_TAB"
     },
     "NAV_INVESTIGATION_TAB": {
       "type": "action",
       "target": "investigationTab",
+      "optional": true,
+      "timeout": 2000,
       "next": "CLICK_GO_TO_INVESTIGATION"
     },
     "CLICK_GO_TO_INVESTIGATION": {
       "type": "action",
       "target": "goToInvestigationButton",
+      "optional": true,
+      "timeout": 2000,
       "next": "NAV_EVIDENCE_TAB"
     },
     "NAV_EVIDENCE_TAB": {
@@ -184,6 +188,7 @@
       "type": "tableAction",
       "page": "incidentDashboard",
       "forceNavigation": true,
+      "status": "In Progress",
       "action": "dashboardIncidentEye",
       "next": "NAV_CLOSURE_TAB"
     },
@@ -213,6 +218,8 @@
       "type": "tableAction",
       "page": "pendingApprovals",
       "forceNavigation": true,
+      "tab": "pendingClosuresTab",
+      "target": "pendingClosuresTab",
       "action": "pendingClosureEye",
       "next": "FILL_CLOSURE_APPROVAL"
     },

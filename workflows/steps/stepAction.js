@@ -83,6 +83,18 @@ async function executeStepAction(page, state, context) {
     await page.waitForLoadState("networkidle");
   }
 
+  if (state.optional) {
+    const isVis = await locator.first().isVisible({ timeout: state.timeout || 3000 }).catch(() => false);
+    if (!isVis) {
+      console.log(`[WORKFLOW] [ACTION] Optional target "${targetKey}" not visible in state "${context.currentState}", skipping action...`);
+      return {
+        actionTaken: "ACTION_SKIPPED",
+        nextState: state.next,
+        details: { target: targetKey, skipped: true },
+      };
+    }
+  }
+
   await locator.first().waitFor({ state: "visible", timeout: state.timeout || 15000 });
   await locator.first().scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => { });
 

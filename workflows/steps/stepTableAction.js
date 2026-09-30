@@ -14,6 +14,21 @@ async function executeStepTableAction(page, state, context) {
     `[WORKFLOW] [TABLE] Searching for table row with status: "${statusFilter}" to click "${actionKey}"...`
   );
 
+  // If tab / target is specified, switch to that tab first (e.g. pendingClosuresTab)
+  if (state.tab || state.target) {
+    const tabKey = state.tab || state.target;
+    console.log(`[WORKFLOW] [TABLE] Activating tab "${tabKey}" before searching table...`);
+    const tabLoc =
+      context.pageRegistry && typeof context.pageRegistry.getLocator === "function"
+        ? context.pageRegistry.getLocator(page, tabKey)
+        : page.locator(tabKey);
+    if (tabLoc && (await tabLoc.count().catch(() => 0)) > 0) {
+      await tabLoc.first().click().catch(() => {});
+      await page.waitForLoadState("networkidle").catch(() => {});
+      await page.waitForTimeout(1000);
+    }
+  }
+
   // Wait for report table to render
   const tableLocator = page.locator(
     state.table || "table.a-IRR-table, table.t-Report-report, div.a-IRR-tableContainer table, table tbody"
